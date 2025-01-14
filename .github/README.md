@@ -1,3 +1,5 @@
+![](https://wakatime.com/badge/github/mudkipdev/alpine.svg)
+
 # alpine
 A binary<sup>(JSON soon™)</sup> serialization library for Java.
 
