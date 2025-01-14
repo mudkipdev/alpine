@@ -67,7 +67,7 @@ Use these methods to map a codec to another type.
 
 ### There's more!
 - Use `BinaryCodec.ordinal(Example.class)` to represent an enum.
-- Use `BinaryCodec.unit(Example.class)` to represent singleton types.
+- Use `BinaryCodec.unit(Example::new)` to represent singleton types.
 - Use `BinaryCodec.map(keyCodec, valueCodec)` to represent a hash map.
 - Use `BinaryCodec.either(leftCodec, rightCodec)` to represent something which can be one of two types.
 - Use `BinaryCodec.of(Function<ByteBuf, T>, Function<T, ByteBuf>)` for an easier way to create a codec, especially if using the `::` syntax.
