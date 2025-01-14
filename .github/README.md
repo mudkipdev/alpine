@@ -1,7 +1,7 @@
-![](https://wakatime.com/badge/github/mudkipdev/alpine.svg)
-
 # alpine
 A binary<sup>(JSON soon™)</sup> serialization library for Java.
+
+![](https://wakatime.com/badge/github/mudkipdev/alpine.svg)
 
 ## Documentation
 The core primitives of Alpine is a codec. A codec is something that can encode and decode an object from a byte buffer.
@@ -72,4 +72,4 @@ Use these methods to map a codec to another type.
 - Use `BinaryCodec.unit(Example::new)` to represent singleton types.
 - Use `BinaryCodec.map(keyCodec, valueCodec)` to represent a hash map.
 - Use `BinaryCodec.either(leftCodec, rightCodec)` to represent something which can be one of two types.
-- Use `BinaryCodec.of(Function<ByteBuf, T>, Function<T, ByteBuf>)` for an easier way to create a codec, especially if using the `::` syntax.
+- Use `BinaryCodec.of(Function<ByteBuf, T>, BiConsumer<ByteBuf, T>)` for an easier way to create a codec, especially if using the `::` syntax.
