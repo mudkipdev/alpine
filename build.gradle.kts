@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains:annotations:26.0.2")
-    compileOnly("io.netty:netty-buffer:4.1.117.Final")
+    compileOnly("io.netty:netty-buffer:4.1.118.Final")
 }
 
 publishing {
