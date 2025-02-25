@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 }
 
-allprojects {
+subprojects {
     apply(plugin = "java")
     apply(plugin = "maven-publish")
 
