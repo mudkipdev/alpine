@@ -29,4 +29,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: alpine
-          path: build/libs/alpine-*.*.*.jar
+          path: |
+            binary/build/libs/alpine-*.*.*.jar
