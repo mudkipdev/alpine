@@ -25,26 +25,27 @@ public static final BinaryCodec<Integer> INTEGER = new BinaryCodec<>() {
 ### Built-in codecs
 There are already many built-in codecs exposed through the `Codec` class, a full list is available below:
 
-| Java Type   | Codec           | Notes                                                                               |
-|-------------|-----------------|-------------------------------------------------------------------------------------|
-| `boolean`   | `BOOLEAN`       | Encoded as `0` or `1`.                                                              |
-| `byte`      | `BYTE`          |                                                                                     |
-| `char`      | `CHARACTER`     | Encoded as a two-byte UTF-16 character.                                             |
-| `short`     | `SHORT`         |                                                                                     |
-| `int`       | `INTEGER`       |                                                                                     |
-| `int`       | `VARINT`        | [LEB128](https://en.wikipedia.org/wiki/LEB128) encoded. Uses between 1 and 5 bytes. |
-| `long`      | `LONG`          |                                                                                     |
-| `float`     | `FLOAT`         |                                                                                     |
-| `double`    | `DOUBLE`        |                                                                                     |
-| `String`    | `STRING`        | Encoded as UTF-8. Length-prefixed with a varint.                                    |
-| `boolean[]` | `BOOLEAN_ARRAY` | Length prefixed with a varint.                                                      |
-| `byte[]`    | `BYTE_ARRAY`    | Length prefixed with a varint.                                                      |
-| `short[]`   | `SHORT_ARRAY`   | Length prefixed with a varint.                                                      |
-| `int[]`     | `INTEGER_ARRAY` | Length prefixed with a varint.                                                      |
-| `long[]`    | `LONG_ARRAY`    | Length prefixed with a varint.                                                      |
-| `float[]`   | `FLOAT_ARRAY`   | Length prefixed with a varint.                                                      |
-| `double[]`  | `DOUBLE_ARRAY`  | Length prefixed with a varint.                                                      |
-| `UUID`      | `UUID`          | Encoded as two 64-bit integers.                                                     |
+| Java Type   | Codec             | Notes                                                                               |
+|-------------|-------------------|-------------------------------------------------------------------------------------|
+| `boolean`   | `BOOLEAN`         | Encoded as `0` or `1`.                                                              |
+| `byte`      | `BYTE`            |                                                                                     |
+| `char`      | `CHARACTER`       | Encoded as a two-byte UTF-16 character.                                             |
+| `short`     | `SHORT`           |                                                                                     |
+| `int`       | `INTEGER`         |                                                                                     |
+| `int`       | `VARINT`          | [LEB128](https://en.wikipedia.org/wiki/LEB128) encoded. Uses between 1 and 5 bytes. |
+| `long`      | `LONG`            |                                                                                     |
+| `float`     | `FLOAT`           |                                                                                     |
+| `double`    | `DOUBLE`          |                                                                                     |
+| `String`    | `STRING`          | Encoded as UTF-8. Length-prefixed with a varint.                                    |
+| `boolean[]` | `BOOLEAN_ARRAY`   | Length prefixed with a varint.                                                      |
+| `char[]`    | `CHARACTER_ARRAY` | Length prefixed with a varint.                                                      |
+| `byte[]`    | `BYTE_ARRAY`      | Length prefixed with a varint.                                                      |
+| `short[]`   | `SHORT_ARRAY`     | Length prefixed with a varint.                                                      |
+| `int[]`     | `INTEGER_ARRAY`   | Length prefixed with a varint.                                                      |
+| `long[]`    | `LONG_ARRAY`      | Length prefixed with a varint.                                                      |
+| `float[]`   | `FLOAT_ARRAY`     | Length prefixed with a varint.                                                      |
+| `double[]`  | `DOUBLE_ARRAY`    | Length prefixed with a varint.                                                      |
+| `UUID`      | `UUID`            | Encoded as two 64-bit integers.                                                     |
 
 ### Templates
 Complex composite types can be created using the template syntax:
