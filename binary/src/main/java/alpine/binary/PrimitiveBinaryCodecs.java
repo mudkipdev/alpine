@@ -22,6 +22,11 @@ interface PrimitiveBinaryCodecs {
     BinaryCodec<Byte> BYTE = of(ByteBuf::readByte, (buffer, value) -> buffer.writeByte(value));
 
     /**
+     * A binary codec which serializes a two byte UTF-16 character.
+     */
+    BinaryCodec<Character> CHARACTER = of(ByteBuf::readChar, (buffer, value) -> buffer.writeChar(Character.getNumericValue(value)));
+
+    /**
      * A binary codec which serializes a signed 16-bit integer.
      */
     BinaryCodec<Short> SHORT = of(ByteBuf::readShort, (buffer, value) -> buffer.writeShort(value));

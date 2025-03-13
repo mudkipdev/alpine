@@ -29,6 +29,7 @@ There are already many built-in codecs exposed through the `Codec` class, a full
 |-------------|-----------------|-------------------------------------------------------------------------------------|
 | `boolean`   | `BOOLEAN`       | Encoded as `0` or `1`.                                                              |
 | `byte`      | `BYTE`          |                                                                                     |
+| `char`      | `CHARACTER`     | Encoded as a two-byte UTF-16 character.                                             |
 | `short`     | `SHORT`         |                                                                                     |
 | `int`       | `INTEGER`       |                                                                                     |
 | `int`       | `VARINT`        | [LEB128](https://en.wikipedia.org/wiki/LEB128) encoded. Uses between 1 and 5 bytes. |

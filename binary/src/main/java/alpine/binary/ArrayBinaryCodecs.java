@@ -31,6 +31,29 @@ interface ArrayBinaryCodecs {
         }
     };
 
+    BinaryCodec<char[]> CHARACTER_ARRAY = new BinaryCodec<>() {
+        @Override
+        public char[] read(ByteBuf buffer) {
+            var length = VARINT.read(buffer);
+            var data = new char[length];
+
+            for (var index = 0; index < length; index++) {
+                data[index] = CHARACTER.read(buffer);
+            }
+
+            return data;
+        }
+
+        @Override
+        public void write(ByteBuf buffer, char[] array) {
+            VARINT.write(buffer, array.length);
+
+            for (var value : array) {
+                CHARACTER.write(buffer, value);
+            }
+        }
+    };
+
     BinaryCodec<byte[]> BYTE_ARRAY = new BinaryCodec<>() {
         @Override
         public byte[] read(ByteBuf buffer) {
