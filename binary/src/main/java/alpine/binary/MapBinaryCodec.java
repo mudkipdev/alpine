@@ -8,7 +8,10 @@ import java.util.Map;
 
 /**
  * A binary codec which serializes an ordered sequence of key-value pairs.
- * @see BinaryCodec
+ * @param keyCodec The binary codec to serialize the keys with.
+ * @param valueCodec The binary codec to serialize the values with.
+ * @param <K> The key type.
+ * @param <V> The value type.
  * @author mudkip
  */
 @ApiStatus.Internal

@@ -11,38 +11,38 @@ import java.util.function.Function;
  * @param <R> The right type.
  */
 public final class Either<L, R> {
+    enum Type {
+        LEFT,
+        RIGHT
+    }
+
+    private final Type type;
     private final L left;
     private final R right;
 
-    private Either(L left, R right) {
+    private Either(Type type, L left, R right) {
+        this.type = type;
         this.left = left;
         this.right = right;
     }
 
     public static <L, R> Either<L, R> left(L left) {
-        if (left == null) {
-            throw new IllegalArgumentException("Left value cannot be null!");
-        }
-
-        return new Either<>(left, null);
+        return new Either<>(Type.LEFT, left, null);
     }
 
     public static <L, R> Either<L, R> right(R right) {
-        if (right == null) {
-            throw new IllegalArgumentException("Left value cannot be null!");
-        }
-
-        return new Either<>(null, right);
+        return new Either<>(Type.RIGHT, null, right);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.left, this.right);
+        return Objects.hash(this.type, this.left, this.right);
     }
 
     @Override
     public boolean equals(Object object) {
         return object instanceof Either<?, ?> either
+                && this.type == either.type
                 && Objects.equals(this.left, either.left)
                 && Objects.equals(this.right, either.right);
     }
@@ -55,11 +55,11 @@ public final class Either<L, R> {
     }
 
     public Optional<L> left() {
-        return Optional.ofNullable(this.left);
+        return this.isLeft() ? Optional.ofNullable(this.left) : Optional.empty();
     }
 
     public Optional<R> right() {
-        return Optional.ofNullable(this.right);
+        return this.isRight() ? Optional.ofNullable(this.right) : Optional.empty();
     }
 
     public <A, B> Either<A, B> map(Function<L, A> leftMapper, Function<R, B> rightMapper) {
@@ -90,11 +90,11 @@ public final class Either<L, R> {
     }
 
     public boolean isLeft() {
-        return this.left != null;
+        return this.type == Type.LEFT;
     }
 
     public boolean isRight() {
-        return this.right != null;
+        return this.type == Type.RIGHT;
     }
 
     public void ifLeft(Consumer<L> consumer) {

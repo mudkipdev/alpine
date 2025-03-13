@@ -6,7 +6,6 @@ import static alpine.binary.BinaryCodec.*;
 
 /**
  * Built-in binary codecs for Java's primitive types.
- * @see BinaryCodec
  * @author mudkip
  */
 interface PrimitiveBinaryCodecs {

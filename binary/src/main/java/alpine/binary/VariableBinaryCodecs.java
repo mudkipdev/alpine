@@ -7,6 +7,9 @@ import io.netty.buffer.ByteBuf;
  * @author mudkip
  */
 interface VariableBinaryCodecs {
+    /**
+     * <a href="https://en.wikipedia.org/wiki/LEB128">LEB128</a> encoded. Uses between 1 and 5 bytes.
+     */
     BinaryCodec<Integer> VARINT = new BinaryCodec<>() {
         private static final int SEGMENT_BITS = 0x7F;
         private static final int CONTINUE_BIT = 0x80;

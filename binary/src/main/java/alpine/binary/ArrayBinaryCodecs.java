@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 
 /**
  * Built-in binary codecs for various primitive arrays.
- * @see BinaryCodec
  * @author mudkip
  */
 interface ArrayBinaryCodecs {

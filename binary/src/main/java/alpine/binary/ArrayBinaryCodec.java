@@ -1,9 +1,13 @@
 package alpine.binary;
 
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
+/**
+ * A binary codec which serializes a sequence of values as an array.
+ * @param parent The binary codec to serialize the values with.
+ * @param <T> The element type.
+ * @author mudkip
+ */
 record ArrayBinaryCodec<T>(BinaryCodec<T> parent) implements BinaryCodec<T[]> {
     @SuppressWarnings("unchecked")
     @Override

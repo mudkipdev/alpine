@@ -1,19 +1,16 @@
 package alpine.binary;
 
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * A binary codec which may or may not have a value present.
  * The value will be read as {@code null} if it is not present.
- * @param parent The codec to serialize the value with.
+ * @param parent The binary codec to serialize the value with.
  * @param <T> The value type.
- * @see BinaryCodec
  * @see OptionalBinaryCodec
  * @author mudkip
  */
-@ApiStatus.Internal
 record NullableBinaryCodec<T>(BinaryCodec<T> parent) implements BinaryCodec<T> {
     @Override
     public @Nullable T read(ByteBuf buffer) {

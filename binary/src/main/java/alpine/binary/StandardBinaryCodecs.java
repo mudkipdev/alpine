@@ -10,7 +10,6 @@ import static alpine.binary.BinaryCodec.*;
 
 /**
  * Built-in binary codecs for Java's standard library types.
- * @see BinaryCodec
  * @author mudkip
  */
 interface StandardBinaryCodecs {
@@ -20,8 +19,7 @@ interface StandardBinaryCodecs {
         @Override
         public String read(ByteBuf buffer) {
             var length = VARINT.read(buffer);
-            var charSequence = buffer.readCharSequence(length, CHARSET);
-            return String.valueOf(charSequence);
+            return String.valueOf(buffer.readCharSequence(length, CHARSET));
         }
 
         @Override

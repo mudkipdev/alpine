@@ -12,7 +12,6 @@ import java.util.function.Function;
  * @param from The function to transform the new type to the original type.
  * @param <T> The original value type.
  * @param <U> The new value type.
- * @see BinaryCodec
  * @author mudkip
  */
 @ApiStatus.Internal

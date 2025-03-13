@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A binary codec which serializes a sequence of values.
+ * A binary codec which serializes a sequence of values as an {@link ArrayList}.
  * @param parent The binary codec to serialize the values with.
  * @param <T> The element type.
- * @see BinaryCodec
  * @author mudkip
  */
 @ApiStatus.Internal

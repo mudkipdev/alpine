@@ -8,9 +8,8 @@ import java.util.Optional;
 /**
  * A binary codec which may or may not have a value present.
  * The value is wrapped with Java's {@link Optional} type to ensure proper handling.
- * @param parent The codec to serialize the value with.
+ * @param parent The binary codec to serialize the value with.
  * @param <T> The value type.
- * @see BinaryCodec
  * @see NullableBinaryCodec
  * @author mudkip
  */
