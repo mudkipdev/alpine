@@ -12,7 +12,6 @@ import java.util.List;
  * @param <T> The element type.
  * @author mudkip
  */
-@ApiStatus.Internal
 record ListBinaryCodec<T>(BinaryCodec<T> parent) implements BinaryCodec<List<T>> {
     @Override
     public List<T> read(ByteBuf buffer) {

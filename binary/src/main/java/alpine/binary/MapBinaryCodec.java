@@ -14,7 +14,6 @@ import java.util.Map;
  * @param <V> The value type.
  * @author mudkip
  */
-@ApiStatus.Internal
 record MapBinaryCodec<K, V>(BinaryCodec<K> keyCodec, BinaryCodec<V> valueCodec) implements BinaryCodec<Map<K, V>> {
     @Override
     public Map<K, V> read(ByteBuf buffer) {

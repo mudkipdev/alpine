@@ -14,7 +14,6 @@ import java.util.function.Function;
  * @param <U> The new value type.
  * @author mudkip
  */
-@ApiStatus.Internal
 record MappedBinaryCodec<T, U>(BinaryCodec<T> parent, Function<T, U> to, Function<U, T> from) implements BinaryCodec<U> {
     @Override
     public U read(ByteBuf buffer) {

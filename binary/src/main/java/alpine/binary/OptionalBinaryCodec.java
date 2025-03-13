@@ -13,7 +13,6 @@ import java.util.Optional;
  * @see NullableBinaryCodec
  * @author mudkip
  */
-@ApiStatus.Internal
 record OptionalBinaryCodec<T>(BinaryCodec<T> parent) implements BinaryCodec<Optional<T>> {
     @Override
     public Optional<T> read(ByteBuf buffer) {
