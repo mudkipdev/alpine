@@ -2,7 +2,7 @@ package alpine.binary;
 
 import io.netty.buffer.ByteBuf;
 
-import static alpine.binary.BinaryCodec.*;
+import static alpine.binary.BinaryCodec.of;
 
 /**
  * Built-in binary codecs for Java's primitive types.

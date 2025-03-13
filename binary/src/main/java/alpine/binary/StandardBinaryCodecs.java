@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import static alpine.binary.BinaryCodec.*;
+import static alpine.binary.BinaryCodec.LONG;
 
 /**
  * Built-in binary codecs for Java's standard library types.

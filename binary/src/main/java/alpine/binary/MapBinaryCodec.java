@@ -1,7 +1,6 @@
 package alpine.binary;
 
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
