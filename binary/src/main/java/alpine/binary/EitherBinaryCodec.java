@@ -24,8 +24,10 @@ record EitherBinaryCodec<L, R>(BinaryCodec<L> leftCodec, BinaryCodec<R> rightCod
     @Override
     public void write(ByteBuf buffer, Either<L, R> value) {
         if (value.isLeft()) {
+            BOOLEAN.write(buffer, false);
             this.leftCodec.write(buffer, value.expectLeft());
         } else {
+            BOOLEAN.write(buffer, true);
             this.rightCodec.write(buffer, value.expectRight());
         }
     }
