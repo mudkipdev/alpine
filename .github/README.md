@@ -58,7 +58,7 @@ public static final BinaryCodec<Integer> INTEGER = new BinaryCodec<>() {
 ```
 
 ### Built-in codecs
-There are already many built-in codecs exposed through the `BinaryCodec` class, a full list is available below:
+There are already many built-in codecs exposed through the `BinaryCodec` class, a partial list is available below:
 
 | Java Type   | Codec             | Notes                                                                               |
 |-------------|-------------------|-------------------------------------------------------------------------------------|
@@ -72,14 +72,6 @@ There are already many built-in codecs exposed through the `BinaryCodec` class, 
 | `float`     | `FLOAT`           |                                                                                     |
 | `double`    | `DOUBLE`          |                                                                                     |
 | `String`    | `STRING`          | Encoded as UTF-8. Length-prefixed with a varint.                                    |
-| `boolean[]` | `BOOLEAN_ARRAY`   | Length prefixed with a varint.                                                      |
-| `char[]`    | `CHARACTER_ARRAY` | Length prefixed with a varint.                                                      |
-| `byte[]`    | `BYTE_ARRAY`      | Length prefixed with a varint.                                                      |
-| `short[]`   | `SHORT_ARRAY`     | Length prefixed with a varint.                                                      |
-| `int[]`     | `INTEGER_ARRAY`   | Length prefixed with a varint.                                                      |
-| `long[]`    | `LONG_ARRAY`      | Length prefixed with a varint.                                                      |
-| `float[]`   | `FLOAT_ARRAY`     | Length prefixed with a varint.                                                      |
-| `double[]`  | `DOUBLE_ARRAY`    | Length prefixed with a varint.                                                      |
 | `UUID`      | `UUID`            | Encoded as two 64-bit integers.                                                     |
 
 ### Templates
