@@ -3,9 +3,44 @@ A binary<sup>(JSON soon™)</sup> serialization library for Java.
 
 ![](https://wakatime.com/badge/github/mudkipdev/alpine.svg)
 
+## Installation
+<details>
+<summary>Gradle (Kotlin)</summary>
+<br>
+
+```kts
+implementation("dev.mudkip:alpine:0.1.0")
+```
+
+</details>
+
+<details>
+<summary>Gradle (Groovy)</summary>
+<br>
+
+```groovy
+implementation 'dev.mudkip:alpine:0.1.0'
+```
+
+</details>
+
+<details>
+<summary>Maven</summary>
+<br>
+
+```xml
+<dependency>
+    <groupId>dev.mudkip</groupId>
+    <artifactId>alpine</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+</details>
+
 ## Documentation
-The core primitives of Alpine is a codec. A codec is something that can encode and decode an object from a byte buffer.
-Netty's `ByteBuf` is used for this, however you don't need to use any other parts of Netty to take advantage of this system.
+The core primitive of Alpine is a codec. A codec is something that can encode and decode an object from a byte buffer.
+Netty's `ByteBuf` is used for this, however you don't need any other parts of Netty to take advantage of this system.
 
 You can easily create an `Integer` codec like this:
 ```java
@@ -23,7 +58,7 @@ public static final BinaryCodec<Integer> INTEGER = new BinaryCodec<>() {
 ```
 
 ### Built-in codecs
-There are already many built-in codecs exposed through the `Codec` class, a full list is available below:
+There are already many built-in codecs exposed through the `BinaryCodec` class, a full list is available below:
 
 | Java Type   | Codec             | Notes                                                                               |
 |-------------|-------------------|-------------------------------------------------------------------------------------|
