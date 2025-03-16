@@ -4,12 +4,17 @@ A binary<sup>(JSON soon™)</sup> serialization library for Java.
 ![](https://wakatime.com/badge/github/mudkipdev/alpine.svg)
 
 ## Installation
+### Binary
+
 <details>
 <summary>Gradle (Kotlin)</summary>
 <br>
 
 ```kts
-implementation("dev.mudkip:alpine:0.1.0")
+dependencies {
+    implementation("dev.mudkip:alpine:0.1.0")
+    implementation("io.netty:netty-buffer:4.1.119.Final")
+}
 ```
 
 </details>
@@ -19,7 +24,10 @@ implementation("dev.mudkip:alpine:0.1.0")
 <br>
 
 ```groovy
-implementation 'dev.mudkip:alpine:0.1.0'
+dependencies {
+    implementation 'dev.mudkip:alpine:0.1.0'
+    implementation 'io.netty:netty-buffer:4.1.119.Final'
+}
 ```
 
 </details>
@@ -33,6 +41,12 @@ implementation 'dev.mudkip:alpine:0.1.0'
     <groupId>dev.mudkip</groupId>
     <artifactId>alpine</artifactId>
     <version>0.1.0</version>
+</dependency>
+
+<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-buffer</artifactId>
+    <version>4.1.119.Final</version>
 </dependency>
 ```
 
