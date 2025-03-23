@@ -12,13 +12,8 @@ subprojects {
     apply(plugin = "com.vanniktech.maven.publish")
 
     group = "dev.mudkip"
-    version = "0.1.0-SNAPSHOT"
-
-    java {
-        toolchain.languageVersion = JavaLanguageVersion.of(21)
-        withSourcesJar()
-        withJavadocJar()
-    }
+    version = "0.1.0"
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
     repositories {
         mavenCentral()
@@ -40,6 +35,7 @@ subprojects {
     mavenPublishing {
         coordinates(group.toString(), "${rootProject.name}-${project.name}", version.toString())
         publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+        signAllPublications()
 
         pom {
             name = project.name
@@ -68,10 +64,5 @@ subprojects {
                 developerConnection = "scm:git:ssh://git@github.com/mudkipdev/alpine.git"
             }
         }
-    }
-
-    signing {
-        useGpgCmd()
-        sign(publishing.publications)
     }
 }
