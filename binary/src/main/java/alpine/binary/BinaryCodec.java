@@ -4,6 +4,7 @@ import alpine.Either;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -97,5 +98,9 @@ public interface BinaryCodec<T> extends
 
     static <E extends Enum<E>> BinaryCodec<E> ordinal(Class<E> enumClass) {
         return VARINT.map(ordinal -> enumClass.getEnumConstants()[ordinal], Enum::ordinal);
+    }
+
+    static BinaryCodec<String> string(Charset charset) {
+        return new StringBinaryCodec(charset);
     }
 }
