@@ -12,7 +12,7 @@ subprojects {
     apply(plugin = "com.vanniktech.maven.publish")
 
     group = "dev.mudkip"
-    version = "0.1.0"
+    version = "0.1.1"
     java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
     repositories {
@@ -20,7 +20,6 @@ subprojects {
     }
 
     dependencies {
-        implementation(rootProject)
         compileOnly("org.jetbrains:annotations:26.0.2")
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
         testImplementation("org.junit.jupiter:junit-jupiter-params:5.12.1")
