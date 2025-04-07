@@ -46,7 +46,7 @@ dependencies {
 <dependency>
     <groupId>io.netty</groupId>
     <artifactId>netty-buffer</artifactId>
-    <version>4.1.119.Final</version>
+    <version>4.2.0.Final</version>
 </dependency>
 ```
 
