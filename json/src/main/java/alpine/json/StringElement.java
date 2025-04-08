@@ -13,14 +13,6 @@ public final class StringElement implements Element {
         this.value = value;
     }
 
-    private static String prettyPrint(String string) {
-        return string
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t")
-                .replace("\"", "\\\"");
-    }
-
     @Override
     public int hashCode() {
         return super.hashCode();
@@ -34,7 +26,7 @@ public final class StringElement implements Element {
 
     @Override
     public String toString() {
-        return prettyPrint(Json.write(this, Json.Formatting.PRETTY));
+        return Json.write(this, Json.Formatting.PRETTY);
     }
 
     public String value() {

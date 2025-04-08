@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class JsonTest {
     @Test
-    @Disabled // max stack size varies on different jvms
+    @Disabled("max stack size varies on different jvms")
     void testRecursion() {
         try {
             var element = Json.read("[".repeat(2000) + "]".repeat(2000));
