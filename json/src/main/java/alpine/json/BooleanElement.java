@@ -24,6 +24,6 @@ public final class BooleanElement implements Element {
     }
 
     public boolean value() {
-        return value;
+        return this.value;
     }
 }

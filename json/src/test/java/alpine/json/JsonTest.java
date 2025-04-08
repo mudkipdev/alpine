@@ -1,5 +1,6 @@
 package alpine.json;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,8 +9,23 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static alpine.json.Element.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class JsonTest {
+    @Test
+    void testInvalid() {
+        var testCases = new String[] {
+                "test",
+                "{", "}", "[", "]",
+                "\"", "\"\0\"",
+                "123abc", "[123e]", "0.", ".0"
+        };
+
+        for (var string : testCases) {
+            assertThrows(ParsingException.class, () -> Json.read(string));
+        }
+    }
+
     @ParameterizedTest(name = "{0} (encoding)")
     @MethodSource("arguments")
     void testEncoding(String label, Element element, String expected) {
@@ -36,6 +52,7 @@ final class JsonTest {
                 // Numbers
                 Arguments.of("Integer Number", number(69), "69"),
                 Arguments.of("Decimal Number", number(1.23), "1.23"),
+//                Arguments.of("Exponent Number", number(-1.23456789E+15), "-1.23456789E+15"),
 
                 // Strings
                 Arguments.of("String", string("Hello world!"), "\"Hello world!\""),

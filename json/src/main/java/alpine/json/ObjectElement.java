@@ -2,7 +2,10 @@ package alpine.json;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -38,6 +41,10 @@ public final class ObjectElement implements Element {
         return this.elements.entrySet().stream();
     }
 
+    public boolean empty() {
+        return this.length() < 1;
+    }
+
     public int length() {
         return this.elements.size();
     }
@@ -69,6 +76,14 @@ public final class ObjectElement implements Element {
     public boolean has(Element value) {
         if (value == null) throw new IllegalArgumentException("Value cannot be null!");
         return this.elements.containsValue(value);
+    }
+
+    public boolean has(Boolean value) {
+        return this.has(Element.bool(value));
+    }
+
+    public boolean has(Number value) {
+        return this.has(Element.number(value));
     }
 
     public void each(BiConsumer<String, Element> consumer) {

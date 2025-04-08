@@ -38,6 +38,6 @@ public final class StringElement implements Element {
     }
 
     public String value() {
-        return value;
+        return this.value;
     }
 }

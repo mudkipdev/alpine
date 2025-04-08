@@ -34,7 +34,7 @@ final class JsonReader {
         } else if (character == BEGIN_OBJECT) {
             return this.parseObject();
         } else {
-            throw new ParsingException("Unexpected character \"" + character + "\"!", this.position);
+            throw new ParsingException(this.input, "Unexpected character \"" + character + "\"!", this.position);
         }
     }
 
@@ -44,7 +44,7 @@ final class JsonReader {
             return nil();
         }
 
-        throw new ParsingException("Failed to parse null!", this.position);
+        throw new ParsingException(this.input, "Failed to parse null!", this.position);
     }
 
     private BooleanElement parseBoolean() throws ParsingException {
@@ -56,7 +56,7 @@ final class JsonReader {
             return bool(false);
         }
 
-        throw new ParsingException("Failed to parse boolean!", this.position);
+        throw new ParsingException(this.input, "Failed to parse boolean!", this.position);
     }
 
     private NumberElement parseNumber() throws ParsingException {
@@ -76,14 +76,14 @@ final class JsonReader {
                 this.position++;
             }
         } else {
-            throw new ParsingException("Expected a digit after the minus sign!", this.position);
+            throw new ParsingException(this.input, "Expected a digit after the minus sign!", this.position);
         }
 
         // fraction part
         if (this.position < length && this.input.charAt(this.position) == '.') {
             this.position++;
             if (this.position >= length || !isDigit(this.input.charAt(this.position))) {
-                throw new ParsingException("Expected digit(s) after the decimal point!", this.position);
+                throw new ParsingException(this.input, "Expected digit(s) after the decimal point!", this.position);
             }
 
             while (this.position < length && isDigit(this.input.charAt(this.position))) {
@@ -99,7 +99,7 @@ final class JsonReader {
             }
 
             if (this.position >= length || !isDigit(this.input.charAt(this.position))) {
-                throw new ParsingException("Expected digit(s) in exponent!", this.position);
+                throw new ParsingException(this.input, "Expected digit(s) in exponent!", this.position);
             }
 
             while (this.position < length && isDigit(this.input.charAt(this.position))) {
@@ -107,14 +107,22 @@ final class JsonReader {
             }
         }
 
+        if (
+                this.position < length
+                && !isWhitespace(this.input.charAt(this.position))
+                && ",}]".indexOf(this.input.charAt(this.position)) < 0) {
+            throw new ParsingException(this.input, "Invalid character after number!", this.position);
+        }
+
         var text = this.input.substring(start, this.position);
 
         try {
             return number(Double.parseDouble(text));
         } catch (NumberFormatException exception) {
-            throw new ParsingException("Invalid number \"" + text + "\"!", start);
+            throw new ParsingException(this.input, "Invalid number \"" + text + "\"!", start);
         }
     }
+
 
     private StringElement parseString() throws ParsingException {
         var builder = new StringBuilder();
@@ -122,7 +130,7 @@ final class JsonReader {
 
         while (true) {
             if (this.position >= this.input.length()) {
-                throw new ParsingException("Unterminated string!", this.position);
+                throw new ParsingException(this.input, "Unterminated string!", this.position);
             }
 
             var character = this.input.charAt(this.position++);
@@ -133,14 +141,14 @@ final class JsonReader {
 
             if (character == BACKSLASH) {
                 if (this.position >= this.input.length()) {
-                    throw new ParsingException("Unterminated escape sequence!", this.position);
+                    throw new ParsingException(this.input, "Unterminated escape sequence!", this.position);
                 }
 
                 var escapeCharacter = this.input.charAt(this.position++);
 
                 if (escapeCharacter == 'u') {
                     if (this.position + 4 > this.input.length()) {
-                        throw new ParsingException("Invalid unicode escape", this.position);
+                        throw new ParsingException(this.input, "Invalid unicode escape", this.position);
                     }
 
                     var hex = this.input.substring(this.position, this.position + 4);
@@ -149,7 +157,7 @@ final class JsonReader {
                         var codePoint = Integer.parseInt(hex, 16);
                         builder.append((char) codePoint);
                     } catch (NumberFormatException e) {
-                        throw new ParsingException("Invalid unicode escape: \\u" + hex, this.position);
+                        throw new ParsingException(this.input, "Invalid unicode escape: \\u" + hex, this.position);
                     }
 
                     this.position += 4;
@@ -157,14 +165,14 @@ final class JsonReader {
                     var decoded = ESCAPE_TO_CHARACTER.get(escapeCharacter);
 
                     if (decoded == null) {
-                        throw new ParsingException("Invalid escape character: \\" + escapeCharacter, this.position);
+                        throw new ParsingException(this.input, "Invalid escape character: \\" + escapeCharacter, this.position);
                     }
 
                     builder.append(decoded);
                 }
 
             } else if (Character.isISOControl(character)) {
-                throw new ParsingException("Unescaped control character in string!", this.position);
+                throw new ParsingException(this.input, "Unescaped control character in string!", this.position);
             } else {
                 builder.append(character);
             }
@@ -215,7 +223,7 @@ final class JsonReader {
             this.skipWhitespace();
 
             if (this.peek() != '"') {
-                throw new ParsingException("Expected string for object key!", this.position);
+                throw new ParsingException(this.input, "Expected string for object key!", this.position);
             }
 
             var key = this.parseString().value();
@@ -244,7 +252,7 @@ final class JsonReader {
 
     private char peek() throws ParsingException {
         if (this.position >= this.input.length()) {
-            throw new ParsingException("Unexpected end of input!", this.position);
+            throw new ParsingException(this.input, "Unexpected end of input!", this.position);
         }
 
         return this.input.charAt(this.position);
@@ -252,7 +260,7 @@ final class JsonReader {
 
     private void expect(char character) throws ParsingException {
         if (this.peek() != character) {
-            throw new ParsingException("Expected '" + character + "', got '" + this.peek() + "'!", this.position);
+            throw new ParsingException(this.input, "Expected '" + character + "', got '" + this.peek() + "'!", this.position);
         }
 
         this.position++;

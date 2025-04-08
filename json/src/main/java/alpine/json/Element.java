@@ -1,8 +1,6 @@
 package alpine.json;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public sealed interface Element permits ArrayElement, BooleanElement, NullElement, NumberElement, ObjectElement, StringElement {
     static NullElement nil() {
@@ -64,5 +62,9 @@ public sealed interface Element permits ArrayElement, BooleanElement, NullElemen
 
     static ObjectElement object() {
         return new ObjectElement();
+    }
+
+    static ObjectElement object(Map<String, Element> map) {
+        return new ObjectElement(new LinkedHashMap<>(map));
     }
 }

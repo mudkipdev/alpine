@@ -24,6 +24,6 @@ public final class NumberElement implements Element {
     }
 
     public double value() {
-        return value;
+        return this.value;
     }
 }
