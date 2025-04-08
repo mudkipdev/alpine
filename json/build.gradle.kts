@@ -1,0 +1,1 @@
+description = "A JSON serialization library for Java."

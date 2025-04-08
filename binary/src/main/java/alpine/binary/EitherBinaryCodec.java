@@ -1,6 +1,5 @@
 package alpine.binary;
 
-import alpine.Either;
 import io.netty.buffer.ByteBuf;
 
 /**
