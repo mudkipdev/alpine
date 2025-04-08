@@ -1,6 +1,5 @@
 package alpine.binary;
 
-import alpine.Either;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.Nullable;
 
