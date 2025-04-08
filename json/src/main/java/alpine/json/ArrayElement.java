@@ -82,14 +82,6 @@ public final class ArrayElement implements Element, Iterable<Element> {
         return this.elements.contains(element);
     }
 
-    public void each(Consumer<Element> consumer) {
-        if (consumer == null) {
-            throw new IllegalArgumentException("Consumer cannot be null!");
-        }
-
-        this.elements.forEach(consumer);
-    }
-
     public ArrayElement append(Element element) {
         if (element == null) throw new IllegalArgumentException("Element cannot be null!");
         return this.copy(list -> list.add(element));

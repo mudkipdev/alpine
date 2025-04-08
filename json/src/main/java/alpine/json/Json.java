@@ -92,15 +92,17 @@ public final class Json {
                 || character == CARRIAGE_RETURN;
     }
 
-    public record Formatting(String indentation, String comma, String colon) {
+    public record Formatting(String indentation, String newLine, String comma, String colon) {
         public static final Formatting COMPACT = new Formatting(
                 "",
+                String.valueOf(LINE_FEED),
                 String.valueOf(COMMA),
                 String.valueOf(COLON));
 
         public static final Formatting PRETTY = new Formatting(
                 String.valueOf(SPACE).repeat(4),
-                String.valueOf(COMMA) + SPACE,
-                String.valueOf(COLON) + SPACE);
+                String.valueOf(LINE_FEED),
+                COMPACT.comma + SPACE,
+                COMPACT.colon + SPACE);
     }
 }

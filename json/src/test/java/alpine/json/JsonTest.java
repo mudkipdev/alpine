@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static alpine.json.Element.*;
@@ -13,15 +14,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class JsonTest {
     @Test
-    void testInvalid() {
-        var testCases = new String[] {
-                "test",
-                "{", "}", "[", "]",
-                "\"", "\"\0\"",
-                "123abc", "[123e]", "0.", ".0"
-        };
+    void testRecursion() {
+        try {
+            var element = Json.read("[".repeat(2000) + "]".repeat(2000));
+            var maxDepth = traverseRecursively(element, 0) + 1;
+            assert maxDepth == 2000;
+        } catch (ParsingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        for (var string : testCases) {
+    @Test
+    void testInvalid() {
+        for (var string : new String[] {
+            "test",
+            "{", "}", "[", "]",
+            "\"", "\"\0\"",
+            "123abc", "[123e]", "0.", ".0"
+        }) {
             assertThrows(ParsingException.class, () -> Json.read(string));
         }
     }
@@ -31,7 +41,7 @@ final class JsonTest {
     void testEncoding(String label, Element element, String expected) {
         var actual = Json.write(element, Json.Formatting.PRETTY);
         assert Objects.equals(actual, expected) : String.format(
-                "Expected %s while encoding, got %s.", expected, actual);
+                "Expected %s while encoding, got %s.", '"' + expected + '"', actual);
     }
 
     @ParameterizedTest(name = "{0} (decoding)")
@@ -57,6 +67,7 @@ final class JsonTest {
                 // Strings
                 Arguments.of("String", string("Hello world!"), "\"Hello world!\""),
                 Arguments.of("Escaped String", string("\n\t\r\b"), "\"\\n\\t\\r\\b\""),
+                Arguments.of("Unicode String", string("\0"), "\"\\u0000\""),
 
                 // Arrays
                 Arguments.of("Empty Array", array(), "[]"),
@@ -66,5 +77,31 @@ final class JsonTest {
                 // Objects
                 Arguments.of("Empty Object", object(), "{}"),
                 Arguments.of("Simple Object", object().set("a", 1).set("b", 2), "{\"a\": 1, \"b\": 2}"));
+    }
+
+    private static int traverseRecursively(Element element, int currentDepth) {
+        return switch (element) {
+            case ArrayElement array -> {
+                var depth = new AtomicInteger(currentDepth);
+
+                array.forEach(child -> {
+                    depth.set(Math.max(depth.get(), traverseRecursively(child, currentDepth + 1)));
+                });
+
+                yield depth.get();
+            }
+
+            case ObjectElement object -> {
+                AtomicInteger depth = new AtomicInteger(currentDepth);
+
+                object.each((key, value) -> {
+                    depth.set(Math.max(depth.get(), traverseRecursively(value, currentDepth + 1)));
+                });
+
+                yield depth.get();
+            }
+
+            default -> currentDepth;
+        };
     }
 }
