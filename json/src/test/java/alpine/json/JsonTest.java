@@ -1,5 +1,6 @@
 package alpine.json;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class JsonTest {
     @Test
+    @Disabled // max stack size varies on different jvms
     void testRecursion() {
         try {
             var element = Json.read("[".repeat(2000) + "]".repeat(2000));
@@ -84,9 +86,8 @@ final class JsonTest {
             case ArrayElement array -> {
                 var depth = new AtomicInteger(currentDepth);
 
-                array.forEach(child -> {
-                    depth.set(Math.max(depth.get(), traverseRecursively(child, currentDepth + 1)));
-                });
+                array.forEach(child -> depth.set(Math.max(depth.get(),
+                        traverseRecursively(child, currentDepth + 1))));
 
                 yield depth.get();
             }
@@ -94,9 +95,8 @@ final class JsonTest {
             case ObjectElement object -> {
                 AtomicInteger depth = new AtomicInteger(currentDepth);
 
-                object.each((key, value) -> {
-                    depth.set(Math.max(depth.get(), traverseRecursively(value, currentDepth + 1)));
-                });
+                object.each((key, value) -> depth.set(Math.max(depth.get(),
+                        traverseRecursively(value, currentDepth + 1))));
 
                 yield depth.get();
             }
