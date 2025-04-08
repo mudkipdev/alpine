@@ -12,7 +12,7 @@ A binary and JSON serialization library for Java.
 
 ```kts
 dependencies {
-    implementation("dev.mudkip:alpine-binary:0.1.1")
+    implementation("dev.mudkip:alpine-binary:0.2.0")
     implementation("io.netty:netty-buffer:4.2.0.Final")
 }
 ```
@@ -25,7 +25,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'dev.mudkip:alpine-binary:0.1.1'
+    implementation 'dev.mudkip:alpine-binary:0.2.0'
     implementation 'io.netty:netty-buffer:4.2.0.Final'
 }
 ```
@@ -40,7 +40,7 @@ dependencies {
 <dependency>
     <groupId>dev.mudkip</groupId>
     <artifactId>alpine-binary</artifactId>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
 </dependency>
 
 <dependency>
