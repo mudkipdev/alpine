@@ -128,7 +128,7 @@ public final class ObjectElement implements Element {
         return this.copy(Map::clear);
     }
 
-    private ObjectElement copy(Consumer<Map<String, Element>> mutator) {
+    public ObjectElement copy(Consumer<Map<String, Element>> mutator) {
         if (mutator == null) throw new IllegalArgumentException("Mutator cannot be null!");
         var map = new HashMap<>(this.elements);
         mutator.accept(map);

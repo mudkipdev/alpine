@@ -148,7 +148,7 @@ public final class ArrayElement implements Element, Iterable<Element> {
         return this.copy(List::clear);
     }
 
-    private ArrayElement copy(Consumer<List<Element>> mutator) {
+    public ArrayElement copy(Consumer<List<Element>> mutator) {
         if (mutator == null) throw new IllegalArgumentException("Mutator cannot be null!");
         var list = new ArrayList<>(this.elements);
         mutator.accept(list);
