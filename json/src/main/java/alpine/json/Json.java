@@ -85,6 +85,10 @@ public final class Json {
         }
     }
 
+    static boolean isControl(char character) {
+        return character <= 0x1F;
+    }
+
     static boolean isWhitespace(char character) {
         return character == SPACE
                 || character == TAB

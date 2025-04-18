@@ -171,7 +171,7 @@ final class JsonReader {
                     builder.append(decoded);
                 }
 
-            } else if (Character.isISOControl(character)) {
+            } else if (isControl(character)) {
                 throw new ParsingException(this.input, "Unescaped control character in string!", this.position);
             } else {
                 builder.append(character);

@@ -10,6 +10,10 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * A JSON element which in itself stores an ordered sequence of elements.
+ * @author mudkip
+ */
 public final class ArrayElement implements Element, Iterable<Element> {
     private final List<Element> elements;
 
@@ -46,10 +50,18 @@ public final class ArrayElement implements Element, Iterable<Element> {
         return this.elements.stream();
     }
 
+    /**
+     * Returns whether the array is empty or not.
+     * @return {@code true} if the length of the array is at least 1, otherwise {@code false}.
+     */
     public boolean empty() {
         return this.length() < 1;
     }
 
+    /**
+     * Returns the amount of elements that are contained in this array.
+     * @return The amount of elements that are contained in this array.
+     */
     public int length() {
         return this.elements.size();
     }
