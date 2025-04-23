@@ -1,6 +1,6 @@
 package alpine.json;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -73,6 +73,10 @@ public final class Json {
         }
     }
 
+    public static Element read(File file) throws ParsingException {
+        return read(file.toPath());
+    }
+
     public static String write(Element element, Formatting formatting) {
         return WRITER.write(element, formatting);
     }
@@ -83,6 +87,10 @@ public final class Json {
         } catch (IOException e) {
             throw new RuntimeException("Failed to write JSON to file!", e);
         }
+    }
+
+    public static void write(File file, Element element, Formatting formatting) {
+        write(file.toPath(), element, formatting);
     }
 
     static boolean isControl(char character) {
@@ -99,13 +107,13 @@ public final class Json {
     public record Formatting(String indentation, String newLine, String comma, String colon) {
         public static final Formatting COMPACT = new Formatting(
                 "",
-                String.valueOf(LINE_FEED),
+                System.lineSeparator(),
                 String.valueOf(COMMA),
                 String.valueOf(COLON));
 
         public static final Formatting PRETTY = new Formatting(
                 String.valueOf(SPACE).repeat(4),
-                String.valueOf(LINE_FEED),
+                System.lineSeparator(),
                 COMPACT.comma + SPACE,
                 COMPACT.colon + SPACE);
     }
