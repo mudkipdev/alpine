@@ -12,6 +12,10 @@ public sealed interface Element permits ArrayElement, BooleanElement, NullElemen
     }
 
     static NumberElement number(double value) {
+        if (Double.isNaN(value) && Double.isInfinite(value)) {
+            throw new IllegalArgumentException("NaN and infinite numbers are not allowed!");
+        }
+
         return new NumberElement(value);
     }
 

@@ -12,7 +12,7 @@ final class JsonReader {
     private int position;
 
     Element read(String input) throws ParsingException {
-        this.input = input.trim();
+        this.input = input;
         this.position = 0;
         this.skipWhitespace();
         return this.readElement();
