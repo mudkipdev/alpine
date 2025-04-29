@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
  * @param <L> The left value type.
  * @param <R> The right value type.
  * @see Either
+ * @author mudkip
  */
 record EitherBinaryCodec<L, R>(BinaryCodec<L> leftCodec, BinaryCodec<R> rightCodec) implements BinaryCodec<Either<L, R>> {
     @Override
@@ -22,12 +23,9 @@ record EitherBinaryCodec<L, R>(BinaryCodec<L> leftCodec, BinaryCodec<R> rightCod
 
     @Override
     public void write(ByteBuf buffer, Either<L, R> value) {
-        if (value.isLeft()) {
-            BOOLEAN.write(buffer, false);
-            this.leftCodec.write(buffer, value.expectLeft());
-        } else {
-            BOOLEAN.write(buffer, true);
-            this.rightCodec.write(buffer, value.expectRight());
-        }
+        BOOLEAN.write(buffer, value.isRight());
+        value.consume(
+                left -> this.leftCodec.write(buffer, left),
+                right -> this.rightCodec.write(buffer, right));
     }
 }

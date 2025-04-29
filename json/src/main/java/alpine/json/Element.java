@@ -2,6 +2,20 @@ package alpine.json;
 
 import java.util.*;
 
+/**
+ * The base class for a JSON element.
+ * <p>
+ * A JSON element can be one of the following types:
+ * <ul>
+ *     <li>{@code null} — represented by {@link NullElement}</li>
+ *     <li>{@code boolean} — represented by {@link BooleanElement}</li>
+ *     <li>{@code number} — represented by {@link NumberElement}</li>
+ *     <li>{@code string} — represented by {@link StringElement}</li>
+ *     <li>{@code array} — represented by {@link ArrayElement}</li>
+ *     <li>{@code object} — represented by {@link ObjectElement}</li>
+ * </ul>
+ * @author mudkip
+ */
 public sealed interface Element permits ArrayElement, BooleanElement, NullElement, NumberElement, ObjectElement, StringElement {
     static NullElement nil() {
         return NullElement.INSTANCE;

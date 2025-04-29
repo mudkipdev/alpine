@@ -1,5 +1,9 @@
 package alpine.json;
 
+/**
+ * An exception thrown when the JSON parser encounters malformed input.
+ * @author mudkip
+ */
 public final class ParsingException extends Exception {
     private final String input;
     private final int position;

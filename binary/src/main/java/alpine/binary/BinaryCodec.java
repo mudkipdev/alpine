@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents something that can encode and decode a value.
+ * Represents something that can encode and decode a value to a byte buffer.
  * @param <T> The value type.
  * @author mudkip
  */

@@ -2,13 +2,40 @@ package alpine.json;
 
 import java.util.function.Function;
 
+/**
+ * Represents something that can encode and decode a value to a JSON element.
+ * @param <T> The value type.
+ * @param <E> The type of the element the codec will be writing to.
+ * @author mudkip
+ */
 public interface JsonCodec<T, E extends Element> {
+    /**
+     * A JSON codec which serializes a boolean as a {@code true} or {@code false} value.
+     */
     JsonCodec<Boolean, BooleanElement> BOOLEAN = of(BooleanElement::value, Element::bool);
+
+    /**
+     * A JSON codec which serializes an integer or a fractional number.
+     */
     JsonCodec<Number, NumberElement> NUMBER = of(NumberElement::value, Element::number);
+
+    /**
+     * A JSON codec which serializes a sequence of characters.
+     */
     JsonCodec<String, StringElement> STRING = of(StringElement::value, Element::string);
 
+    /**
+     * Decodes the value from the element.
+     * @param element The element
+     * @return The decoded value.
+     */
     T decode(E element);
 
+    /**
+     * Encodes a value to an element.
+     * @param value The
+     * @return The JSON element.
+     */
     E encode(T value);
 
     default <U> JsonCodec<U, E> map(Function<T, U> to, Function<U, T> from) {

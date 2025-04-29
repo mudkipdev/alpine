@@ -3,59 +3,16 @@ package alpine.json;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
+import static alpine.json.JsonUtility.*;
+
+/**
+ * A helper class for reading and writing JSON data.
+ * @author mudkip
+ */
 public final class Json {
     private static final JsonReader READER = new JsonReader();
     private static final JsonWriter WRITER = new JsonWriter();
-
-    // Structural
-    static final char BEGIN_OBJECT = '{';
-    static final char END_OBJECT = '}';
-    static final char BEGIN_ARRAY = '[';
-    static final char END_ARRAY = ']';
-    static final char COMMA = ',';
-    static final char COLON = ':';
-
-    // Strings
-    static final char QUOTE = '"';
-    static final char BACKSLASH = '\\';
-    static final char SLASH = '/';
-
-    // Whitespace
-    static final char SPACE = ' ';
-    static final char TAB = '\t';
-    static final char LINE_FEED = '\n';
-    static final char CARRIAGE_RETURN = '\r';
-
-    // Literals
-    static final String NULL = "null";
-    static final String TRUE = "true";
-    static final String FALSE = "false";
-
-    // Other
-    static final char BACKSPACE = '\b';
-    static final char FORM_FEED = '\f';
-
-    // Escaping
-    static final Map<Character, Character> CHARACTER_TO_ESCAPE = Map.of(
-            QUOTE, QUOTE,
-            BACKSLASH, BACKSLASH,
-            BACKSPACE, 'b',
-            FORM_FEED, 'f',
-            LINE_FEED, 'n',
-            CARRIAGE_RETURN, 'r',
-            TAB, 't');
-
-    static final Map<Character, Character> ESCAPE_TO_CHARACTER = Map.of(
-            'b', BACKSPACE,
-            'f', FORM_FEED,
-            'n', LINE_FEED,
-            'r', CARRIAGE_RETURN,
-            't', TAB,
-            QUOTE, QUOTE,
-            BACKSLASH, BACKSLASH,
-            SLASH, SLASH);
 
     private Json() {
 
@@ -93,24 +50,26 @@ public final class Json {
         write(file.toPath(), element, formatting);
     }
 
-    static boolean isControl(char character) {
-        return character <= 0x1F;
-    }
-
-    static boolean isWhitespace(char character) {
-        return character == SPACE
-                || character == TAB
-                || character == LINE_FEED
-                || character == CARRIAGE_RETURN;
-    }
-
+    /**
+     * Defines rules for customizing the formatting when writing JSON data.
+     * @param indentation The string to use when indenting. Typically empty, a tab character ({@code \t}), or multiple spaces.
+     * @param newLine The string to use to terminate a line. Typically empty, a Unix line ending ({@code \n}) or a Windows line ending ({@code \r\n}).
+     * @param comma The string to use between values of an object or array. Typically {@code ,} followed by a space.
+     * @param colon The string to use between key-value pairs of an object. Typically {@code :} followed by a space.
+     */
     public record Formatting(String indentation, String newLine, String comma, String colon) {
+        /**
+         * Represents a minified format ideal for exchanging data over the network.
+         */
         public static final Formatting COMPACT = new Formatting(
                 "",
                 System.lineSeparator(),
                 String.valueOf(COMMA),
                 String.valueOf(COLON));
 
+        /**
+         * Represents a beautified format ideal for human readability.
+         */
         public static final Formatting PRETTY = new Formatting(
                 String.valueOf(SPACE).repeat(4),
                 System.lineSeparator(),

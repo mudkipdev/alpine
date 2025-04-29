@@ -1,16 +1,19 @@
 package alpine.json;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static alpine.json.Json.*;
+import static alpine.json.JsonUtility.*;
 
+@ApiStatus.Internal
 final class JsonWriter {
     private static final String ESCAPED = ""
             + QUOTE + BACKSLASH + BACKSPACE + FORM_FEED
             + LINE_FEED + CARRIAGE_RETURN + TAB;
 
-    String write(Element value, Formatting formatting) {
+    String write(Element value, Json.Formatting formatting) {
         var builder = new StringBuilder();
 
         switch (value) {
@@ -44,7 +47,7 @@ final class JsonWriter {
             if (CHARACTER_TO_ESCAPE.containsKey(character)) {
                 builder.append(BACKSLASH).append(CHARACTER_TO_ESCAPE.get(character));
             } else if (Character.isISOControl(character)) {
-                builder.append(String.format("\\u%04X", (int) character));
+                builder.append(String.format("\\%c%04X", UNICODE_ESCAPE, (int) character));
             } else {
                 builder.append(character);
             }
@@ -53,7 +56,7 @@ final class JsonWriter {
         builder.append(QUOTE);
     }
 
-    private void writeArray(StringBuilder builder, ArrayElement element, Formatting formatting) {
+    private void writeArray(StringBuilder builder, ArrayElement element, Json.Formatting formatting) {
         builder
                 .append(BEGIN_ARRAY)
                 .append(element.stream()
@@ -62,7 +65,7 @@ final class JsonWriter {
                 .append(END_ARRAY);
     }
 
-    private void writeObject(StringBuilder builder, ObjectElement element, Formatting formatting) {
+    private void writeObject(StringBuilder builder, ObjectElement element, Json.Formatting formatting) {
         var firstElement = new AtomicBoolean(true);
         builder.append(BEGIN_OBJECT);
 

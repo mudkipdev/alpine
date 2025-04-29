@@ -10,6 +10,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+/**
+ * A JSON element which stores a collection of key-value pairs where the keys are strings.
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-4">RFC 8259</a>
+ * @author mudkip
+ */
 public final class ObjectElement implements Element {
     private final Map<String, Element> elements;
 

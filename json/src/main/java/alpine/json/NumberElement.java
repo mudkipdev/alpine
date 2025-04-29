@@ -1,5 +1,10 @@
 package alpine.json;
 
+/**
+ * A JSON element which can represent both integers and fractional numbers.
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-6">RFC 8259</a>
+ * @author mudkip
+ */
 public final class NumberElement implements Element {
     private final double value;
 

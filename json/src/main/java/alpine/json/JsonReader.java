@@ -1,12 +1,15 @@
 package alpine.json;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import static alpine.json.Element.*;
-import static alpine.json.Json.*;
+import static alpine.json.JsonUtility.*;
 import static java.lang.Character.isDigit;
 
+@ApiStatus.Internal
 final class JsonReader {
     private String input;
     private int position;
@@ -21,9 +24,9 @@ final class JsonReader {
     private Element readElement() throws ParsingException {
         var character = this.peek();
 
-        if (character == '"') {
+        if (character == QUOTE) {
             return this.parseString();
-        } else if (isDigit(character) || character == '-') {
+        } else if (isDigit(character) || character == MINUS) {
             return this.parseNumber();
         } else if (character == TRUE.charAt(0) || character == FALSE.charAt(0)) {
             return this.parseBoolean();
@@ -48,10 +51,10 @@ final class JsonReader {
     }
 
     private BooleanElement parseBoolean() throws ParsingException {
-        if (this.input.startsWith("true", this.position)) {
+        if (this.input.startsWith(TRUE, this.position)) {
             this.position += TRUE.length();
             return bool(true);
-        } else if (this.input.startsWith("false", this.position)) {
+        } else if (this.input.startsWith(FALSE, this.position)) {
             this.position += FALSE.length();
             return bool(false);
         }
@@ -64,7 +67,7 @@ final class JsonReader {
         var length = this.input.length();
 
         // negative sign
-        if (this.peek() == '-') {
+        if (this.peek() == MINUS) {
             this.position++;
         }
 
@@ -80,7 +83,7 @@ final class JsonReader {
         }
 
         // fraction part
-        if (this.position < length && this.input.charAt(this.position) == '.') {
+        if (this.position < length && this.input.charAt(this.position) == BEGIN_DECIMAL) {
             this.position++;
             if (this.position >= length || !isDigit(this.input.charAt(this.position))) {
                 throw new ParsingException(this.input, "Expected digit(s) after the decimal point!", this.position);
@@ -94,7 +97,7 @@ final class JsonReader {
         // exponent part
         if (this.position < length && this.isExponent(this.input.charAt(this.position))) {
             this.position++;
-            if (this.position < length && (this.input.charAt(this.position) == '+' || this.input.charAt(this.position) == '-')) {
+            if (this.position < length && (this.input.charAt(this.position) == PLUS || this.input.charAt(this.position) == MINUS)) {
                 this.position++;
             }
 
@@ -146,7 +149,7 @@ final class JsonReader {
 
                 var escapeCharacter = this.input.charAt(this.position++);
 
-                if (escapeCharacter == 'u') {
+                if (escapeCharacter == UNICODE_ESCAPE) {
                     if (this.position + 4 > this.input.length()) {
                         throw new ParsingException(this.input, "Invalid unicode escape", this.position);
                     }
@@ -222,7 +225,7 @@ final class JsonReader {
         while (true) {
             this.skipWhitespace();
 
-            if (this.peek() != '"') {
+            if (this.peek() != QUOTE) {
                 throw new ParsingException(this.input, "Expected string for object key!", this.position);
             }
 
@@ -247,7 +250,8 @@ final class JsonReader {
     }
 
     private boolean isExponent(char character) {
-        return character == 'e' || character == 'E';
+        return character == Character.toLowerCase(EXPONENT)
+                || character == Character.toUpperCase(EXPONENT);
     }
 
     private char peek() throws ParsingException {

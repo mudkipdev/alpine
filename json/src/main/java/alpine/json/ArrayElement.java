@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 /**
  * A JSON element which in itself stores an ordered sequence of elements.
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-5">RFC 8259</a>
  * @author mudkip
  */
 public final class ArrayElement implements Element, Iterable<Element> {

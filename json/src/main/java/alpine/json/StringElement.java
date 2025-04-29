@@ -2,6 +2,11 @@ package alpine.json;
 
 import java.util.Objects;
 
+/**
+ * A JSON element which can store a sequence of Unicode characters.
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-7">RFC 8259</a>
+ * @author mudkip
+ */
 public final class StringElement implements Element {
     private final String value;
 
