@@ -66,13 +66,13 @@ public interface JsonCodec<T, E extends Element> {
         };
     }
 
-    static <T, E extends Element> JsonCodec<T, E> decode(Function<E, T> decoder) {
+    static <T, E extends Element> JsonCodec<T, E> decodeOnly(Function<E, T> decoder) {
         return of(decoder, value -> {
             throw new UnsupportedOperationException("This JSON codec does not support encoding!");
         });
     }
 
-    static <T, E extends Element> JsonCodec<T, E> encode(Function<T, E> encoder) {
+    static <T, E extends Element> JsonCodec<T, E> encodeOnly(Function<T, E> encoder) {
         return of(value -> {
             throw new UnsupportedOperationException("This JSON codec does not support encoding!");
         }, encoder);

@@ -83,6 +83,18 @@ public interface BinaryCodec<T> extends
         };
     }
 
+    static <T> BinaryCodec<T> decodeOnly(Function<ByteBuf, T> reader) {
+        return of(reader, (buffer, value) -> {
+            throw new UnsupportedOperationException("This binary codec does not support encoding!");
+        });
+    }
+
+    static <T> BinaryCodec<T> encodeOnly(BiConsumer<ByteBuf, T> writer) {
+        return of(buffer -> {
+            throw new UnsupportedOperationException("This binary codec does not support decoding!");
+        }, writer);
+    }
+
     static <T> BinaryCodec<T> unit(Supplier<T> supplier) {
         return of(buffer -> supplier.get(), (buffer, value) -> {});
     }
