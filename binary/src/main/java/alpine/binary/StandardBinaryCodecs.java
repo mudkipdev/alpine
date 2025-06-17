@@ -1,8 +1,16 @@
 package alpine.binary;
 
+import io.netty.buffer.ByteBuf;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+import static alpine.binary.ArrayBinaryCodecs.BYTE_ARRAY;
 import static alpine.binary.BinaryCodec.LONG;
 
 /**
@@ -20,4 +28,29 @@ interface StandardBinaryCodecs {
             LONG, java.util.UUID::getMostSignificantBits,
             LONG, java.util.UUID::getLeastSignificantBits,
             UUID::new);
+
+    /**
+     * Returns binary codec which serializes an image.
+     * @return A binary codec which serializes an image.
+     * @see java.awt.image.BufferedImage
+     */
+    static BinaryCodec<BufferedImage> image(String format) {
+        return BYTE_ARRAY.map(
+                array -> {
+                    try (var stream = new ByteArrayInputStream(array)) {
+                        return ImageIO.read(stream);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to read image!", e);
+                    }
+                },
+                image -> {
+                    try {
+                        var stream = new ByteArrayOutputStream();
+                        ImageIO.write(image, format, stream);
+                        return stream.toByteArray();
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to write image!", e);
+                    }
+                });
+    }
 }

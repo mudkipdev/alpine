@@ -3,7 +3,7 @@ import com.vanniktech.maven.publish.SonatypeHost
 plugins {
     java
     signing
-    id("com.vanniktech.maven.publish") version "0.31.0"
+    id("com.vanniktech.maven.publish") version "0.32.0"
 }
 
 subprojects {
@@ -21,10 +21,10 @@ subprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:26.0.2")
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:5.12.1")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.12.1")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.1")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.1")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.1")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
     }
 
     tasks.test {
