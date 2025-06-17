@@ -1,2 +1,2 @@
 rootProject.name = "alpine"
-include("binary")
+include("binary", "json", "benchmark")

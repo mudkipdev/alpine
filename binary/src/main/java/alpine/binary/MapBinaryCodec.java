@@ -28,6 +28,8 @@ record MapBinaryCodec<K, V>(BinaryCodec<K> keyCodec, BinaryCodec<V> valueCodec) 
 
     @Override
     public void write(ByteBuf buffer, Map<K, V> value) {
+        VARINT.write(buffer, value.size());
+
         for (var entry : value.entrySet()) {
             this.keyCodec.write(buffer, entry.getKey());
             this.valueCodec.write(buffer, entry.getValue());

@@ -30,4 +30,5 @@ jobs:
         with:
           name: alpine
           path: |
-            binary/build/libs/alpine-*.*.*.jar
+            binary/build/libs/binary-*.*.*.jar
+            json/build/libs/json-*.*.*.jar
