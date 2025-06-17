@@ -6,30 +6,9 @@ plugins {
     id("com.vanniktech.maven.publish") version "0.32.0"
 }
 
-subprojects {
-    apply(plugin = "java")
+fun Project.applyPublishingSettings() {
     apply(plugin = "signing")
     apply(plugin = "com.vanniktech.maven.publish")
-
-    group = "dev.mudkip"
-    version = "0.2.0"
-    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        compileOnly("org.jetbrains:annotations:26.0.2")
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.1")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.1")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
-    }
-
-    tasks.test {
-        useJUnitPlatform()
-    }
 
     mavenPublishing {
         coordinates(group.toString(), "${rootProject.name}-${project.name}", version.toString())
@@ -63,5 +42,33 @@ subprojects {
                 developerConnection = "scm:git:ssh://git@github.com/mudkipdev/alpine.git"
             }
         }
+    }
+}
+
+subprojects {
+    apply(plugin = "java")
+
+    group = "dev.mudkip"
+    version = "0.2.0"
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compileOnly("org.jetbrains:annotations:26.0.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.1")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.1")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.1")
+    }
+
+    tasks.test {
+        useJUnitPlatform()
+    }
+
+    if (name in setOf("binary", "json")) {
+        applyPublishingSettings()
     }
 }
