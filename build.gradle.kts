@@ -3,7 +3,7 @@ import com.vanniktech.maven.publish.SonatypeHost
 plugins {
     java
     signing
-    id("com.vanniktech.maven.publish") version "0.32.0"
+    id("com.vanniktech.maven.publish") version "0.33.0"
 }
 
 subprojects {
