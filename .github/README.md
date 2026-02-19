@@ -4,6 +4,9 @@ A binary and JSON serialization library for Java.
 ![](https://wakatime.com/badge/github/mudkipdev/alpine.svg)
 
 ## Installation
+> [!WARNING]
+> I'm in the process of setting up the Maven publishing again. JSON is currently not published, and for binary you should use the `0.1.1` version instead of `0.2.0`. This notice is temporary.
+
 ### Binary
 
 <details>
@@ -13,7 +16,7 @@ A binary and JSON serialization library for Java.
 ```kts
 dependencies {
     implementation("dev.mudkip:alpine-binary:0.2.0")
-    implementation("io.netty:netty-buffer:4.2.0.Final")
+    implementation("io.netty:netty-buffer:4.2.10.Final")
 }
 ```
 
@@ -26,7 +29,7 @@ dependencies {
 ```groovy
 dependencies {
     implementation 'dev.mudkip:alpine-binary:0.2.0'
-    implementation 'io.netty:netty-buffer:4.2.0.Final'
+    implementation 'io.netty:netty-buffer:4.2.10.Final'
 }
 ```
 
@@ -46,7 +49,7 @@ dependencies {
 <dependency>
     <groupId>io.netty</groupId>
     <artifactId>netty-buffer</artifactId>
-    <version>4.2.0.Final</version>
+    <version>4.2.10.Final</version>
 </dependency>
 ```
 
