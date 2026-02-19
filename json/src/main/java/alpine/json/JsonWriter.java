@@ -50,7 +50,7 @@ final class JsonWriter {
         var length = string.length();
 
         for (var index = 0; index < length; index++) {
-            var character = string.charAt(i);
+            var character = string.charAt(index);
 
             // fast path: safe character
             if (character != '"' && character != '\\' && !Character.isISOControl(character)) {
@@ -58,7 +58,7 @@ final class JsonWriter {
             }
 
             if (index > start) {
-                builder.append(string, start, i);
+                builder.append(string, start, index);
             }
 
             switch (character) {
