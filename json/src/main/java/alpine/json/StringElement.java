@@ -31,7 +31,7 @@ public final class StringElement implements Element {
 
     @Override
     public String toString() {
-        return Json.write(this, Json.Formatting.PRETTY);
+        return Json.write(this, Json.Formatting.INLINE_PRETTY);
     }
 
     public String value() {

@@ -63,17 +63,26 @@ public final class Json {
          */
         public static final Formatting COMPACT = new Formatting(
                 "",
-                System.lineSeparator(),
+                "\n",
                 String.valueOf(COMMA),
                 String.valueOf(COLON));
 
         /**
-         * Represents a beautified format ideal for human readability.
+         * Represents a single-line beautified format with spaces between values.
+         */
+        public static final Formatting INLINE_PRETTY = new Formatting(
+                "",
+                "\n",
+                COMPACT.comma + SPACE,
+                COMPACT.colon + SPACE);
+
+        /**
+         * Represents a multi-line beautified format ideal for human readability.
          */
         public static final Formatting PRETTY = new Formatting(
                 String.valueOf(SPACE).repeat(4),
-                System.lineSeparator(),
-                COMPACT.comma + SPACE,
+                "\n",
+                String.valueOf(COMMA),
                 COMPACT.colon + SPACE);
     }
 }

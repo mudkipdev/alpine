@@ -16,18 +16,18 @@ final class JsonWriter {
             default -> 32;
         });
 
-        this.write(builder, value, formatting);
+        this.write(builder, value, formatting, 0);
         return builder.toString();
     }
 
-    private void write(StringBuilder builder, Element value, Json.Formatting formatting) {
+    private void write(StringBuilder builder, Element value, Json.Formatting formatting, int depth) {
         switch (value) {
             case NullElement _ -> builder.append(NULL);
             case BooleanElement element -> builder.append(element.value() ? TRUE : FALSE);
             case NumberElement element -> this.writeNumber(builder, element.value());
             case StringElement element -> this.writeString(builder, element.value());
-            case ArrayElement element -> this.writeArray(builder, element, formatting);
-            case ObjectElement element -> this.writeObject(builder, element, formatting);
+            case ArrayElement element -> this.writeArray(builder, element, formatting, depth);
+            case ObjectElement element -> this.writeObject(builder, element, formatting, depth);
         }
     }
 
@@ -89,7 +89,16 @@ final class JsonWriter {
         builder.append(QUOTE);
     }
 
-    private void writeArray(StringBuilder builder, ArrayElement element, Json.Formatting formatting) {
+    private void writeIndentation(StringBuilder builder, Json.Formatting formatting, int depth) {
+        if (formatting.indentation().isEmpty()) {
+            return;
+        }
+
+        builder.append(formatting.newLine());
+        builder.append(formatting.indentation().repeat(depth));
+    }
+
+    private void writeArray(StringBuilder builder, ArrayElement element, Json.Formatting formatting, int depth) {
         builder.append(BEGIN_ARRAY);
         var firstElement = true;
 
@@ -98,14 +107,19 @@ final class JsonWriter {
                 builder.append(formatting.comma());
             }
 
-            this.write(builder, value, formatting);
+            this.writeIndentation(builder, formatting, depth + 1);
+            this.write(builder, value, formatting, depth + 1);
             firstElement = false;
+        }
+
+        if (!firstElement) {
+            this.writeIndentation(builder, formatting, depth);
         }
 
         builder.append(END_ARRAY);
     }
 
-    private void writeObject(StringBuilder builder, ObjectElement element, Json.Formatting formatting) {
+    private void writeObject(StringBuilder builder, ObjectElement element, Json.Formatting formatting, int depth) {
         builder.append(BEGIN_OBJECT);
         var firstElement = new boolean[] { true };
 
@@ -116,10 +130,15 @@ final class JsonWriter {
                 builder.append(formatting.comma());
             }
 
+            this.writeIndentation(builder, formatting, depth + 1);
             this.writeString(builder, key);
             builder.append(formatting.colon());
-            this.write(builder, value, formatting);
+            this.write(builder, value, formatting, depth + 1);
         });
+
+        if (!firstElement[0]) {
+            writeIndent(builder, formatting, depth);
+        }
 
         builder.append(END_OBJECT);
     }

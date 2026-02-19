@@ -79,7 +79,7 @@ final class JsonTest {
     @ParameterizedTest(name = "{0} (encoding)")
     @MethodSource("arguments")
     void testEncoding(String label, Element element, String expected) {
-        var actual = Json.write(element, Json.Formatting.PRETTY);
+        var actual = Json.write(element, Json.Formatting.INLINE_PRETTY);
         assert Objects.equals(actual, expected) : String.format(
                 "Expected %s while encoding, got %s.", '"' + expected + '"', actual);
     }
