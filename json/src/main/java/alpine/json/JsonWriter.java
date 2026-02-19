@@ -137,7 +137,7 @@ final class JsonWriter {
         });
 
         if (!firstElement[0]) {
-            writeIndent(builder, formatting, depth);
+            this.writeIndentation(builder, formatting, depth);
         }
 
         builder.append(END_OBJECT);
