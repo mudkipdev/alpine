@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents something that can encode and decode a value.
+ * Represents something that can encode and decode a value to a byte buffer.
  * @param <T> The value type.
  * @author mudkip
  */
@@ -81,6 +81,26 @@ public interface BinaryCodec<T> extends
                 writer.accept(buffer, value);
             }
         };
+    }
+
+    static <T> BinaryCodec<T> unsupported() {
+        return of(buffer -> {
+            throw new UnsupportedOperationException("This binary codec is not implemented!");
+        }, (buffer, value) -> {
+            throw new UnsupportedOperationException("This binary codec is not implemented!");
+        });
+    }
+
+    static <T> BinaryCodec<T> decodeOnly(Function<ByteBuf, T> reader) {
+        return of(reader, (buffer, value) -> {
+            throw new UnsupportedOperationException("This binary codec does not support encoding!");
+        });
+    }
+
+    static <T> BinaryCodec<T> encodeOnly(BiConsumer<ByteBuf, T> writer) {
+        return of(buffer -> {
+            throw new UnsupportedOperationException("This binary codec does not support decoding!");
+        }, writer);
     }
 
     static <T> BinaryCodec<T> unit(Supplier<T> supplier) {

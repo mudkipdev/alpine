@@ -10,28 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-final class CodecTest {
-    static Stream<Arguments> arguments() {
-        return Stream.of(
-                // Boolean
-                Arguments.of("Boolean", BinaryCodec.BOOLEAN, false, new byte[] {0}),
-                Arguments.of("Boolean", BinaryCodec.BOOLEAN, true, new byte[] {1}),
-
-                // String
-                Arguments.of("String", BinaryCodec.STRING, "ABC", new byte[] {3, 65, 66, 67}),
-
-                // Either
-                Arguments.of(
-                        "Either",
-                        BinaryCodec.either(BinaryCodec.INTEGER, BinaryCodec.STRING),
-                        Either.right("A"),
-                        new byte[] {1, 1, 65}),
-
-                // Optional
-                Arguments.of("Optional", BinaryCodec.BOOLEAN.optional(), Optional.empty(), new byte[] {0}),
-                Arguments.of("Optional", BinaryCodec.INTEGER.optional(), Optional.of(3), new byte[] {1, 0, 0, 0, 3}));
-    }
-
+final class BinaryTest {
     @ParameterizedTest(name = "{0} (encoding)")
     @MethodSource("arguments")
     <T> void testEncoding(String label, BinaryCodec<T> codec, T value, byte[] data) {
@@ -55,5 +34,26 @@ final class CodecTest {
 
         assert Objects.equals(actualValue, value) : String.format(
                 "Expected %s while decoding, got %s.", value, actualValue);
+    }
+
+    static Stream<Arguments> arguments() {
+        return Stream.of(
+                // Boolean
+                Arguments.of("Boolean", BinaryCodec.BOOLEAN, false, new byte[] {0}),
+                Arguments.of("Boolean", BinaryCodec.BOOLEAN, true, new byte[] {1}),
+
+                // String
+                Arguments.of("String", BinaryCodec.STRING, "ABC", new byte[] {3, 65, 66, 67}),
+
+                // Either
+                Arguments.of(
+                        "Either",
+                        BinaryCodec.either(BinaryCodec.INTEGER, BinaryCodec.STRING),
+                        Either.right("A"),
+                        new byte[] {1, 1, 65}),
+
+                // Optional
+                Arguments.of("Optional", BinaryCodec.BOOLEAN.optional(), Optional.empty(), new byte[] {0}),
+                Arguments.of("Optional", BinaryCodec.INTEGER.optional(), Optional.of(3), new byte[] {1, 0, 0, 0, 3}));
     }
 }

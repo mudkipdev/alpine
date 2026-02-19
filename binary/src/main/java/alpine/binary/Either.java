@@ -9,6 +9,7 @@ import java.util.function.Function;
  * Something that can be represented as one of two types.
  * @param <L> The left type.
  * @param <R> The right type.
+ * @author mudkip
  */
 public final class Either<L, R> {
     enum Type {
@@ -87,6 +88,10 @@ public final class Either<L, R> {
     public void consume(Consumer<L> leftConsumer, Consumer<R> rightConsumer) {
         this.ifLeft(leftConsumer);
         this.ifRight(rightConsumer);
+    }
+
+    public Either<R, L> swap() {
+        return this.isLeft() ? right(this.left) : left(this.right);
     }
 
     public boolean isLeft() {
