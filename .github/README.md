@@ -4,9 +4,6 @@ A binary and JSON serialization library for Java.
 ![](https://wakatime.com/badge/github/mudkipdev/alpine.svg)
 
 ## Installation
-> [!WARNING]
-> I'm in the process of setting up the Maven publishing again. JSON is currently not published, and for binary you should use the `0.1.1` version instead of `0.2.0`. This notice is temporary.
-
 ### Binary
 
 <details>
