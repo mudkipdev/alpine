@@ -13,14 +13,40 @@ interface PrimitiveCodecs {
         }
     };
 
-    Codec<Double> NUMBER = new Codec<>() {
+    Codec<Byte> BYTE = new Codec<>() {
         @Override
-        public <R> Double decode(Transcoder<R> transcoder, R value) {
-            return transcoder.decodeNumber(value);
+        public <R> Byte decode(Transcoder<R> transcoder, R value) {
+            return (byte) transcoder.decodeNumber(value);
         }
 
         @Override
-        public <R> R encode(Transcoder<R> transcoder, Double value) {
+        public <R> R encode(Transcoder<R> transcoder, Byte value) {
+            return transcoder.encodeNumber(value);
+        }
+    };
+
+    Codec<Character> CHARACTER = new Codec<>() {
+        @Override
+        public <R> Character decode(Transcoder<R> transcoder, R value) {
+            var s = transcoder.decodeString(value);
+            if (s.length() != 1) throw new DecodingException("Expected a single character string!");
+            return s.charAt(0);
+        }
+
+        @Override
+        public <R> R encode(Transcoder<R> transcoder, Character value) {
+            return transcoder.encodeString(String.valueOf(value));
+        }
+    };
+
+    Codec<Short> SHORT = new Codec<>() {
+        @Override
+        public <R> Short decode(Transcoder<R> transcoder, R value) {
+            return (short) transcoder.decodeNumber(value);
+        }
+
+        @Override
+        public <R> R encode(Transcoder<R> transcoder, Short value) {
             return transcoder.encodeNumber(value);
         }
     };
@@ -33,6 +59,42 @@ interface PrimitiveCodecs {
 
         @Override
         public <R> R encode(Transcoder<R> transcoder, Integer value) {
+            return transcoder.encodeNumber(value);
+        }
+    };
+
+    Codec<Long> LONG = new Codec<>() {
+        @Override
+        public <R> Long decode(Transcoder<R> transcoder, R value) {
+            return (long) transcoder.decodeNumber(value);
+        }
+
+        @Override
+        public <R> R encode(Transcoder<R> transcoder, Long value) {
+            return transcoder.encodeNumber(value);
+        }
+    };
+
+    Codec<Float> FLOAT = new Codec<>() {
+        @Override
+        public <R> Float decode(Transcoder<R> transcoder, R value) {
+            return (float) transcoder.decodeNumber(value);
+        }
+
+        @Override
+        public <R> R encode(Transcoder<R> transcoder, Float value) {
+            return transcoder.encodeNumber(value);
+        }
+    };
+
+    Codec<Double> DOUBLE = new Codec<>() {
+        @Override
+        public <R> Double decode(Transcoder<R> transcoder, R value) {
+            return transcoder.decodeNumber(value);
+        }
+
+        @Override
+        public <R> R encode(Transcoder<R> transcoder, Double value) {
             return transcoder.encodeNumber(value);
         }
     };

@@ -1,31 +1,17 @@
 package alpine.json;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static alpine.json.Element.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 final class JsonTest {
-    @Test
-    @Disabled("max stack size varies on different jvms")
-    void testRecursion() {
-        try {
-            var element = Json.read("[".repeat(2000) + "]".repeat(2000));
-            var maxDepth = traverseRecursively(element, 0) + 1;
-            assert maxDepth == 2000;
-        } catch (ParsingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Test
     void testInvalid() {
         for (var string : new String[] {
@@ -36,6 +22,58 @@ final class JsonTest {
         }) {
             assertThrows(ParsingException.class, () -> Json.read(string));
         }
+    }
+
+    @Test
+    void testArrayAccess() {
+        assert array().empty();
+        assert array(true).get(0) instanceof BooleanElement;
+        assert array(true).expect(0, BooleanElement.class).value();
+        assertThrows(IndexOutOfBoundsException.class, () -> array().get(69));
+    }
+
+    @Test
+    void testArrayInsertion() {
+        assert array().append("a").length() == 1;
+        assert array().append("b").insert(0, true).first() instanceof BooleanElement;
+    }
+
+    @Test
+    void testArrayRemoval() {
+        assert array(1, 2, 3).clear().empty();
+        assert Objects.equals(array("a", "b", "c").removeAt(0), array("b", "c"));
+        assert Objects.equals(array("a", "b", "c").remove("b"), array("a", "c"));
+        assertThrows(IndexOutOfBoundsException.class, () -> array().removeAt(1));
+    }
+
+    @Test
+    void testArrayContains() {
+        assert !array().has(nil());
+        assert array(1, 2, 3).has(number(1));
+        assert array("a", "b").has(string("b"));
+    }
+
+    @Test
+    void testObjectAccess() {
+        assert object().empty();
+    }
+
+    @Test
+    void testObjectSetting() {
+        object().set("key", "value").expect("key", StringElement.class);
+        assertThrows(AssertionError.class, () -> object().set("key", "value").expect("key", NullElement.class));
+    }
+
+    @Test
+    void testObjectContains() {
+        assert !object().hasKey("key");
+        assert !object().hasValue(false);
+        assert object().set("key", "value").hasKey("key");
+    }
+
+    @Test
+    void testObjectRemoval() {
+        assert object().set("key", "value").remove("key").empty();
     }
 
     @ParameterizedTest(name = "{0} (encoding)")
@@ -79,23 +117,5 @@ final class JsonTest {
                 // Objects
                 Arguments.of("Empty Object", object(), "{}"),
                 Arguments.of("Simple Object", object().set("a", 1).set("b", 2), "{\"a\": 1, \"b\": 2}"));
-    }
-
-    private static int traverseRecursively(Element element, int currentDepth) {
-        return switch (element) {
-            case ArrayElement array -> {
-                var depth = new AtomicInteger(currentDepth);
-                array.forEach(child -> depth.set(Math.max(depth.get(), traverseRecursively(child, currentDepth + 1))));
-                yield depth.get();
-            }
-
-            case ObjectElement object -> {
-                var depth = new AtomicInteger(currentDepth);
-                object.each((key, value) -> depth.set(Math.max(depth.get(), traverseRecursively(value, currentDepth + 1))));
-                yield depth.get();
-            }
-
-            default -> currentDepth;
-        };
     }
 }

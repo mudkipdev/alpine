@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
@@ -58,8 +59,8 @@ public interface BinaryCodec<T> extends
         return new ListBinaryCodec<>(this);
     }
 
-    default BinaryCodec<T[]> array() {
-        return new ArrayBinaryCodec<>(this);
+    default BinaryCodec<T[]> array(IntFunction<T[]> constructor) {
+        return new ArrayBinaryCodec<>(this, constructor);
     }
 
     /**
