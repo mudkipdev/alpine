@@ -1,19 +1,18 @@
-import com.vanniktech.maven.publish.SonatypeHost
-
 plugins {
     java
-    signing
-    id("com.vanniktech.maven.publish") version "0.32.0"
+    id("com.vanniktech.maven.publish") version "0.36.0"
 }
 
 fun Project.applyPublishingSettings() {
-    apply(plugin = "signing")
     apply(plugin = "com.vanniktech.maven.publish")
 
     mavenPublishing {
         coordinates(group.toString(), "${rootProject.name}-${project.name}", version.toString())
-        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-        signAllPublications()
+        publishToMavenCentral()
+
+        if (!gradle.startParameter.taskNames.any { it.contains("publishToMavenLocal") }) {
+            signAllPublications()
+        }
 
         pom {
             name = project.name
