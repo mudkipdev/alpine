@@ -50,7 +50,7 @@ subprojects {
 
     group = "dev.mudkip"
     version = "0.2.0"
-    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+    java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
     repositories {
         mavenCentral()

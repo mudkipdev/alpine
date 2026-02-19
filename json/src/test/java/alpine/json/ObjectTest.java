@@ -20,9 +20,9 @@ final class ObjectTest {
 
     @Test
     void testContains() {
-        assert !object().has("key");
-        assert !object().has(false);
-        assert object().set("key", "value").has("key");
+        assert !object().hasKey("key");
+        assert !object().hasValue(false);
+        assert object().set("key", "value").hasKey("key");
     }
 
     @Test

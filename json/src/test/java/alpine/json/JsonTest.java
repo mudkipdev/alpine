@@ -85,19 +85,13 @@ final class JsonTest {
         return switch (element) {
             case ArrayElement array -> {
                 var depth = new AtomicInteger(currentDepth);
-
-                array.forEach(child -> depth.set(Math.max(depth.get(),
-                        traverseRecursively(child, currentDepth + 1))));
-
+                array.forEach(child -> depth.set(Math.max(depth.get(), traverseRecursively(child, currentDepth + 1))));
                 yield depth.get();
             }
 
             case ObjectElement object -> {
-                AtomicInteger depth = new AtomicInteger(currentDepth);
-
-                object.each((key, value) -> depth.set(Math.max(depth.get(),
-                        traverseRecursively(value, currentDepth + 1))));
-
+                var depth = new AtomicInteger(currentDepth);
+                object.each((key, value) -> depth.set(Math.max(depth.get(), traverseRecursively(value, currentDepth + 1))));
                 yield depth.get();
             }
 

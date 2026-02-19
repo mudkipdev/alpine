@@ -2,30 +2,33 @@ package alpine.json;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-
 import static alpine.json.JsonUtility.*;
 
 @ApiStatus.Internal
 final class JsonWriter {
-    private static final String ESCAPED = ""
-            + QUOTE + BACKSLASH + BACKSPACE + FORM_FEED
-            + LINE_FEED + CARRIAGE_RETURN + TAB;
+    private static final char[] HEX_CHARACTERS = "0123456789ABCDEF".toCharArray();
 
     String write(Element value, Json.Formatting formatting) {
-        var builder = new StringBuilder();
+        // pre-size string builder for performance
+        var builder = new StringBuilder(switch (value) {
+            case ObjectElement element -> 64 * element.length();
+            case ArrayElement element  -> 16 * element.length();
+            default -> 32;
+        });
 
+        this.write(builder, value, formatting);
+        return builder.toString();
+    }
+
+    private void write(StringBuilder builder, Element value, Json.Formatting formatting) {
         switch (value) {
-            case NullElement ignored -> builder.append(NULL);
+            case NullElement _ -> builder.append(NULL);
             case BooleanElement element -> builder.append(element.value() ? TRUE : FALSE);
             case NumberElement element -> this.writeNumber(builder, element.value());
             case StringElement element -> this.writeString(builder, element.value());
             case ArrayElement element -> this.writeArray(builder, element, formatting);
             case ObjectElement element -> this.writeObject(builder, element, formatting);
-        };
-
-        return builder.toString();
+        }
     }
 
     private void writeNumber(StringBuilder builder, double value) {
@@ -43,37 +46,79 @@ final class JsonWriter {
     private void writeString(StringBuilder builder, String string) {
         builder.append(QUOTE);
 
-        for (var character : string.toCharArray()) {
-            if (CHARACTER_TO_ESCAPE.containsKey(character)) {
-                builder.append(BACKSLASH).append(CHARACTER_TO_ESCAPE.get(character));
-            } else if (Character.isISOControl(character)) {
-                builder.append(String.format("\\%c%04X", UNICODE_ESCAPE, (int) character));
-            } else {
-                builder.append(character);
+        var start = 0;
+        var length = string.length();
+
+        for (var index = 0; index < length; index++) {
+            var character = string.charAt(i);
+
+            // fast path: safe character
+            if (character != '"' && character != '\\' && !Character.isISOControl(character)) {
+                continue;
             }
+
+            if (index > start) {
+                builder.append(string, start, i);
+            }
+
+            switch (character) {
+                case '"' -> builder.append("\\\"");
+                case '\\' -> builder.append("\\\\");
+                case '\b' -> builder.append("\\b");
+                case '\f' -> builder.append("\\f");
+                case '\n' -> builder.append("\\n");
+                case '\r' -> builder.append("\\r");
+                case '\t' -> builder.append("\\t");
+
+                default -> {
+                    builder.append("\\u");
+                    builder.append(HEX_CHARACTERS[(character >> 12) & 0xF]);
+                    builder.append(HEX_CHARACTERS[(character >> 8) & 0xF]);
+                    builder.append(HEX_CHARACTERS[(character >> 4) & 0xF]);
+                    builder.append(HEX_CHARACTERS[character & 0xF]);
+                }
+            }
+
+            start = index + 1;
+        }
+
+        if (start < length) {
+            builder.append(string, start, length);
         }
 
         builder.append(QUOTE);
     }
 
     private void writeArray(StringBuilder builder, ArrayElement element, Json.Formatting formatting) {
-        builder
-                .append(BEGIN_ARRAY)
-                .append(element.stream()
-                    .map(value -> this.write(value, formatting))
-                    .collect(Collectors.joining(formatting.comma())))
-                .append(END_ARRAY);
+        builder.append(BEGIN_ARRAY);
+        var firstElement = true;
+
+        for (var value : element) {
+            if (!firstElement) {
+                builder.append(formatting.comma());
+            }
+
+            this.write(builder, value, formatting);
+            firstElement = false;
+        }
+
+        builder.append(END_ARRAY);
     }
 
     private void writeObject(StringBuilder builder, ObjectElement element, Json.Formatting formatting) {
-        var firstElement = new AtomicBoolean(true);
         builder.append(BEGIN_OBJECT);
+        var firstElement = new boolean[] { true };
 
         element.each((key, value) -> {
-            builder.append(firstElement.get() ? "" : formatting.comma());
+            if (firstElement[0]) {
+                firstElement[0] = false;
+            } else {
+                builder.append(formatting.comma());
+            }
+
             this.writeString(builder, key);
-            firstElement.set(false);
-            builder.append(formatting.colon()).append(this.write(value, formatting));
+            builder.append(formatting.colon());
+            this.write(builder, value, formatting);
         });
 
         builder.append(END_OBJECT);

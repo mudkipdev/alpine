@@ -20,7 +20,7 @@ public final class StringElement implements Element {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return this.value.hashCode();
     }
 
     @Override

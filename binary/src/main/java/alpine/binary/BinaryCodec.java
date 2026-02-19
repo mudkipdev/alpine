@@ -83,6 +83,14 @@ public interface BinaryCodec<T> extends
         };
     }
 
+    static <T> BinaryCodec<T> unsupported() {
+        return of(buffer -> {
+            throw new UnsupportedOperationException("This binary codec is not implemented!");
+        }, (buffer, value) -> {
+            throw new UnsupportedOperationException("This binary codec is not implemented!");
+        });
+    }
+
     static <T> BinaryCodec<T> decodeOnly(Function<ByteBuf, T> reader) {
         return of(reader, (buffer, value) -> {
             throw new UnsupportedOperationException("This binary codec does not support encoding!");

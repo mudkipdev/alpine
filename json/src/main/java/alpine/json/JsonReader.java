@@ -12,10 +12,12 @@ import static java.lang.Character.isDigit;
 @ApiStatus.Internal
 final class JsonReader {
     private String input;
+    private char[] characters;
     private int position;
 
     Element read(String input) throws ParsingException {
         this.input = input;
+        this.characters = input.toCharArray();
         this.position = 0;
         this.skipWhitespace();
         return this.readElement();
@@ -42,8 +44,14 @@ final class JsonReader {
     }
 
     private NullElement parseNull() throws ParsingException {
-        if (this.input.startsWith(NULL, this.position)) {
-            this.position += NULL.length();
+        var length = this.characters.length;
+
+        if (this.position + 4 <= length
+                && this.characters[this.position + 0] == 'n'
+                && this.characters[this.position + 1] == 'u'
+                && this.characters[this.position + 2] == 'l'
+                && this.characters[this.position + 3] == 'l') {
+            this.position += 4;
             return nil();
         }
 
@@ -51,11 +59,24 @@ final class JsonReader {
     }
 
     private BooleanElement parseBoolean() throws ParsingException {
-        if (this.input.startsWith(TRUE, this.position)) {
-            this.position += TRUE.length();
+        var length = this.characters.length;
+
+        if (this.position + 4 <= length
+                && this.characters[this.position + 0] == 't'
+                && this.characters[this.position + 1] == 'r'
+                && this.characters[this.position + 2] == 'u'
+                && this.characters[this.position + 3] == 'e') {
+            this.position += 4;
             return bool(true);
-        } else if (this.input.startsWith(FALSE, this.position)) {
-            this.position += FALSE.length();
+        }
+
+        if (this.position + 5 <= length
+                && this.characters[this.position + 0] == 'f'
+                && this.characters[this.position + 1] == 'a'
+                && this.characters[this.position + 2] == 'l'
+                && this.characters[this.position + 3] == 's'
+                && this.characters[this.position + 4] == 'e') {
+            this.position += 5;
             return bool(false);
         }
 
@@ -64,7 +85,7 @@ final class JsonReader {
 
     private NumberElement parseNumber() throws ParsingException {
         var start = this.position;
-        var length = this.input.length();
+        var length = this.characters.length;
 
         // negative sign
         if (this.peek() == MINUS) {
@@ -75,7 +96,7 @@ final class JsonReader {
         if (this.peek() == '0') {
             this.position++;
         } else if (this.peek() >= '1' && this.peek() <= '9') {
-            while (this.position < length && isDigit(this.input.charAt(this.position))) {
+            while (this.position < length && isDigit(this.characters[this.position])) {
                 this.position++;
             }
         } else {
@@ -83,97 +104,141 @@ final class JsonReader {
         }
 
         // fraction part
-        if (this.position < length && this.input.charAt(this.position) == BEGIN_DECIMAL) {
+        if (this.position < length && this.characters[this.position] == BEGIN_DECIMAL) {
             this.position++;
-            if (this.position >= length || !isDigit(this.input.charAt(this.position))) {
+            if (this.position >= length || !isDigit(this.characters[this.position])) {
                 throw new ParsingException(this.input, "Expected digit(s) after the decimal point!", this.position);
             }
 
-            while (this.position < length && isDigit(this.input.charAt(this.position))) {
+            while (this.position < length && isDigit(this.characters[this.position])) {
                 this.position++;
             }
         }
 
         // exponent part
-        if (this.position < length && this.isExponent(this.input.charAt(this.position))) {
-            this.position++;
-            if (this.position < length && (this.input.charAt(this.position) == PLUS || this.input.charAt(this.position) == MINUS)) {
-                this.position++;
-            }
+        if (this.position < length) {
+            var character = this.characters[this.position];
 
-            if (this.position >= length || !isDigit(this.input.charAt(this.position))) {
-                throw new ParsingException(this.input, "Expected digit(s) in exponent!", this.position);
-            }
-
-            while (this.position < length && isDigit(this.input.charAt(this.position))) {
+            if (character == 'e' || character == 'E') {
                 this.position++;
+
+                if (this.position < length && (this.characters[this.position] == PLUS || this.characters[this.position] == MINUS)) {
+                    this.position++;
+                }
+
+                if (this.position >= length || !isDigit(this.characters[this.position])) {
+                    throw new ParsingException(this.input, "Expected digit(s) in exponent!", this.position);
+                }
+
+                while (this.position < length && isDigit(this.characters[this.position])) {
+                    this.position++;
+                }
             }
         }
 
-        if (
-                this.position < length
-                && !isWhitespace(this.input.charAt(this.position))
-                && ",}]".indexOf(this.input.charAt(this.position)) < 0) {
-            throw new ParsingException(this.input, "Invalid character after number!", this.position);
+        if (this.position < length) {
+            var character = this.characters[this.position];
+
+            if (!isWhitespace(character) && character != COMMA && character != END_OBJECT && character != END_ARRAY) {
+                throw new ParsingException(this.input, "Invalid character after number!", this.position);
+            }
         }
 
-        var text = this.input.substring(start, this.position);
+        var text = new String(this.characters, start, this.position - start);
 
         try {
-            return number(Double.parseDouble(text));
+            var value = Double.parseDouble(text);
+
+            if (Double.isInfinite(value) || Double.isNaN(value)) {
+                throw new ParsingException(this.input, "Number out of range: " + text, start);
+            }
+
+            return number(value);
         } catch (NumberFormatException exception) {
             throw new ParsingException(this.input, "Invalid number \"" + text + "\"!", start);
         }
     }
 
-
     private StringElement parseString() throws ParsingException {
-        var builder = new StringBuilder();
+        return string(this.parseRawString());
+    }
+
+    private String parseRawString() throws ParsingException {
         this.expect(QUOTE);
+        var start = this.position;
+        var length = this.characters.length;
+
+        // fast path: scan for closing quote with no escape sequences
+        while (this.position < length) {
+            var character = this.characters[this.position];
+
+            if (character == QUOTE) {
+                return new String(this.characters, start, this.position++ - start);
+            }
+
+            if (character == BACKSLASH) {
+                break; // fall through
+            }
+
+            if (isControl(character)) {
+                throw new ParsingException(this.input, "Unescaped control character in string!", this.position);
+            }
+
+            this.position++;
+        }
+
+        if (this.position >= length) {
+            throw new ParsingException(this.input, "Unterminated string!", this.position);
+        }
+
+        var builder = new StringBuilder();
+        builder.append(this.characters, start, this.position - start);
 
         while (true) {
-            if (this.position >= this.input.length()) {
+            if (this.position >= length) {
                 throw new ParsingException(this.input, "Unterminated string!", this.position);
             }
 
-            var character = this.input.charAt(this.position++);
+            var character = this.characters[this.position++];
 
             if (character == QUOTE) {
                 break;
             }
 
             if (character == BACKSLASH) {
-                if (this.position >= this.input.length()) {
+                if (this.position >= length) {
                     throw new ParsingException(this.input, "Unterminated escape sequence!", this.position);
                 }
 
-                var escapeCharacter = this.input.charAt(this.position++);
+                var escapeCharacter = this.characters[this.position++];
 
                 if (escapeCharacter == UNICODE_ESCAPE) {
-                    if (this.position + 4 > this.input.length()) {
+                    if (this.position + 4 > length) {
                         throw new ParsingException(this.input, "Invalid unicode escape", this.position);
                     }
 
-                    var hex = this.input.substring(this.position, this.position + 4);
+                    var hex = new String(this.characters, this.position, 4);
 
                     try {
-                        var codePoint = Integer.parseInt(hex, 16);
-                        builder.append((char) codePoint);
+                        builder.append((char) Integer.parseInt(hex, 16));
                     } catch (NumberFormatException e) {
                         throw new ParsingException(this.input, "Invalid unicode escape: \\u" + hex, this.position);
                     }
 
                     this.position += 4;
                 } else {
-                    var decoded = ESCAPE_TO_CHARACTER.get(escapeCharacter);
-
-                    if (decoded == null) {
-                        throw new ParsingException(this.input, "Invalid escape character: \\" + escapeCharacter, this.position);
-                    }
-
-                    builder.append(decoded);
+                    builder.append(switch (escapeCharacter) {
+                        case '"'  -> '"';
+                        case '\\' -> '\\';
+                        case '/'  -> '/';
+                        case 'b'  -> '\b';
+                        case 'f'  -> '\f';
+                        case 'n'  -> '\n';
+                        case 'r'  -> '\r';
+                        case 't'  -> '\t';
+                        default -> throw new ParsingException(this.input, "Invalid escape character: \\" + escapeCharacter, this.position);
+                    });
                 }
-
             } else if (isControl(character)) {
                 throw new ParsingException(this.input, "Unescaped control character in string!", this.position);
             } else {
@@ -181,9 +246,8 @@ final class JsonReader {
             }
         }
 
-        return string(builder.toString());
+        return builder.toString();
     }
-
 
     private ArrayElement parseArray() throws ParsingException {
         var elements = new ArrayList<Element>();
@@ -197,8 +261,7 @@ final class JsonReader {
 
         while (true) {
             this.skipWhitespace();
-            var element = this.readElement();
-            elements.add(element);
+            elements.add(this.readElement());
             this.skipWhitespace();
 
             if (this.peek() == END_ARRAY) {
@@ -209,7 +272,7 @@ final class JsonReader {
             this.expect(COMMA);
         }
 
-        return array(elements);
+        return new ArrayElement(elements);
     }
 
     private ObjectElement parseObject() throws ParsingException {
@@ -229,13 +292,12 @@ final class JsonReader {
                 throw new ParsingException(this.input, "Expected string for object key!", this.position);
             }
 
-            var key = this.parseString().value();
+            var key = this.parseRawString();
             this.skipWhitespace();
             this.expect(COLON);
             this.skipWhitespace();
 
-            var value = this.readElement();
-            map.put(key, value);
+            map.put(key, this.readElement());
             this.skipWhitespace();
 
             if (this.peek() == END_OBJECT) {
@@ -249,29 +311,26 @@ final class JsonReader {
         return new ObjectElement(map);
     }
 
-    private boolean isExponent(char character) {
-        return character == Character.toLowerCase(EXPONENT)
-                || character == Character.toUpperCase(EXPONENT);
-    }
-
     private char peek() throws ParsingException {
-        if (this.position >= this.input.length()) {
+        if (this.position >= this.characters.length) {
             throw new ParsingException(this.input, "Unexpected end of input!", this.position);
         }
 
-        return this.input.charAt(this.position);
+        return this.characters[this.position];
     }
 
     private void expect(char character) throws ParsingException {
-        if (this.peek() != character) {
-            throw new ParsingException(this.input, "Expected '" + character + "', got '" + this.peek() + "'!", this.position);
+        var actualCharacter = this.peek();
+
+        if (actualCharacter != character) {
+            throw new ParsingException(this.input, "Expected '" + character + "', got '" + actualCharacter + "'!", this.position);
         }
 
         this.position++;
     }
 
     private void skipWhitespace() {
-        while (this.position < this.input.length() && isWhitespace(this.input.charAt(this.position))) {
+        while (this.position < this.characters.length && isWhitespace(this.characters[this.position])) {
             this.position++;
         }
     }
