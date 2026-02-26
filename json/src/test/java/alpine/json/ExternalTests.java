@@ -12,11 +12,11 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-final class ExternalTest {
+final class ExternalTests {
     @SuppressWarnings("resource")
     static Stream<Arguments> arguments() {
         try {
-            var url = Objects.requireNonNull(ExternalTest.class.getResource("/data"));
+            var url = Objects.requireNonNull(ExternalTests.class.getResource("/data"));
 
             return Files.walk(Path.of(url.toURI()), 1)
                     .filter(Files::isRegularFile)

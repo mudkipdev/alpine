@@ -3,11 +3,9 @@ package alpine.json;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -39,7 +37,7 @@ public final class ArrayElement implements Element, Iterable<Element> {
 
     @Override
     public String toString() {
-        return Json.write(this, Json.Formatting.INLINE_PRETTY);
+        return Json.write(this, JsonFormatting.INLINE);
     }
 
     @Override
@@ -95,6 +93,54 @@ public final class ArrayElement implements Element, Iterable<Element> {
         return this.elements.contains(element);
     }
 
+    public boolean has(String value) {
+        return this.has(Element.string(value));
+    }
+
+    public boolean has(Number value) {
+        return this.has(Element.number(value));
+    }
+
+    public boolean has(Boolean value) {
+        return this.has(Element.bool(value));
+    }
+
+    public void each(Consumer<Element> consumer) {
+        if (consumer == null) {
+            throw new IllegalArgumentException("Consumer cannot be null!");
+        }
+
+        this.elements.forEach(consumer);
+    }
+
+    public boolean all(Predicate<Element> predicate) {
+        if (predicate == null) {
+            throw new IllegalArgumentException("Predicate cannot be null!");
+        }
+
+        for (var element : this.elements) {
+            if (!predicate.test(element)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean any(Predicate<Element> predicate) {
+        if (predicate == null) {
+            throw new IllegalArgumentException("Predicate cannot be null!");
+        }
+
+        for (var element : this.elements) {
+            if (predicate.test(element)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public ArrayElement append(Element element) {
         if (element == null) throw new IllegalArgumentException("Element cannot be null!");
         return this.copy(list -> list.add(element));
@@ -110,6 +156,23 @@ public final class ArrayElement implements Element, Iterable<Element> {
 
     public ArrayElement append(String element) {
         return this.append(Element.string(element));
+    }
+
+    public ArrayElement set(int index, Element element) {
+        if (element == null) throw new IllegalArgumentException("Element cannot be null!");
+        return this.copy(list -> list.set(index, element));
+    }
+
+    public ArrayElement set(int index, boolean element) {
+        return this.set(index, Element.bool(element));
+    }
+
+    public ArrayElement set(int index, Number element) {
+        return this.set(index, Element.number(element));
+    }
+
+    public ArrayElement set(int index, String element) {
+        return this.set(index, Element.string(element));
     }
 
     public ArrayElement insert(int index, Element element) {
@@ -129,28 +192,32 @@ public final class ArrayElement implements Element, Iterable<Element> {
         return this.insert(index, Element.string(element));
     }
 
-    public ArrayElement removeAt(int index) {
+    public ArrayElement remove(int index) {
         return this.copy(list -> list.remove(index));
     }
 
-    public ArrayElement remove(Element element) {
+    public ArrayElement removeValue(Element element) {
         return this.copy(list -> list.remove(element));
     }
 
-    public ArrayElement remove(boolean element) {
-        return this.remove(Element.bool(element));
+    public ArrayElement removeValue(boolean element) {
+        return this.removeValue(Element.bool(element));
     }
 
-    public ArrayElement remove(Number element) {
-        return this.remove(Element.number(element));
+    public ArrayElement removeValue(Number element) {
+        return this.removeValue(Element.number(element));
     }
 
-    public ArrayElement remove(String element) {
-        return this.remove(Element.string(element));
+    public ArrayElement removeValue(String element) {
+        return this.removeValue(Element.string(element));
     }
 
     public ArrayElement clear() {
         return this.copy(List::clear);
+    }
+
+    public ArrayElement reverse() {
+        return this.copy(Collections::reverse);
     }
 
     public ArrayElement copy(Consumer<List<Element>> mutator) {

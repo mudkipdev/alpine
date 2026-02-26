@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import static alpine.json.Element.*;
-import static alpine.json.JsonUtility.*;
+import static alpine.json.Json.*;
 import static java.lang.Character.isDigit;
 
 @ApiStatus.Internal
@@ -139,7 +139,7 @@ final class JsonReader {
         if (this.position < length) {
             var character = this.characters[this.position];
 
-            if (!isWhitespace(character) && character != COMMA && character != END_OBJECT && character != END_ARRAY) {
+            if (!isWhitespaceCharacter(character) && character != COMMA && character != END_OBJECT && character != END_ARRAY) {
                 throw new ParsingException(this.input, "Invalid character after number!", this.position);
             }
         }
@@ -180,7 +180,7 @@ final class JsonReader {
                 break; // fall through
             }
 
-            if (isControl(character)) {
+            if (isControlCharacter(character)) {
                 throw new ParsingException(this.input, "Unescaped control character in string!", this.position);
             }
 
@@ -239,7 +239,7 @@ final class JsonReader {
                         default -> throw new ParsingException(this.input, "Invalid escape character: \\" + escapeCharacter, this.position);
                     });
                 }
-            } else if (isControl(character)) {
+            } else if (isControlCharacter(character)) {
                 throw new ParsingException(this.input, "Unescaped control character in string!", this.position);
             } else {
                 builder.append(character);
@@ -330,7 +330,7 @@ final class JsonReader {
     }
 
     private void skipWhitespace() {
-        while (this.position < this.characters.length && isWhitespace(this.characters[this.position])) {
+        while (this.position < this.characters.length && isWhitespaceCharacter(this.characters[this.position])) {
             this.position++;
         }
     }

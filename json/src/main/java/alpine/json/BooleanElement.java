@@ -25,7 +25,7 @@ public final class BooleanElement implements Element {
 
     @Override
     public String toString() {
-        return Json.write(this, Json.Formatting.INLINE_PRETTY);
+        return Json.write(this, JsonFormatting.INLINE);
     }
 
     public boolean value() {

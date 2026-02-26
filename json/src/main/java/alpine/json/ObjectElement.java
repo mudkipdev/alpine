@@ -1,12 +1,13 @@
 package alpine.json;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
  * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-4">RFC 8259</a>
  * @author mudkip
  */
-public final class ObjectElement implements Element {
+public final class ObjectElement implements Element, Iterable<Map.Entry<String, Element>> {
     private final Map<String, Element> elements;
 
     ObjectElement() {
@@ -38,7 +39,12 @@ public final class ObjectElement implements Element {
 
     @Override
     public String toString() {
-        return Json.write(this, Json.Formatting.INLINE_PRETTY);
+        return Json.write(this, JsonFormatting.INLINE);
+    }
+
+    @Override
+    public @NotNull Iterator<Map.Entry<String, Element>> iterator() {
+        return this.elements.entrySet().iterator();
     }
 
     public Stream<Map.Entry<String, Element>> stream() {
@@ -195,6 +201,62 @@ public final class ObjectElement implements Element {
         this.elements.forEach(consumer);
     }
 
+    public boolean all(BiPredicate<String, Element> predicate) {
+        if (predicate == null) {
+            throw new IllegalArgumentException("Predicate cannot be null!");
+        }
+
+        for (var entry : this.elements.entrySet()) {
+            if (!predicate.test(entry.getKey(), entry.getValue())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean any(BiPredicate<String, Element> predicate) {
+        if (predicate == null) {
+            throw new IllegalArgumentException("Predicate cannot be null!");
+        }
+
+        for (var entry : this.elements.entrySet()) {
+            if (predicate.test(entry.getKey(), entry.getValue())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean allValues(Predicate<Element> predicate) {
+        if (predicate == null) {
+            throw new IllegalArgumentException("Predicate cannot be null!");
+        }
+
+        for (var value : this.elements.values()) {
+            if (!predicate.test(value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean anyValues(Predicate<Element> predicate) {
+        if (predicate == null) {
+            throw new IllegalArgumentException("Predicate cannot be null!");
+        }
+
+        for (var value : this.elements.values()) {
+            if (predicate.test(value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public ObjectElement set(String key, Element value) {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null!");
@@ -229,7 +291,21 @@ public final class ObjectElement implements Element {
         return this.copy(Map::clear);
     }
 
-    public ObjectElement copy(Consumer<Map<String, Element>> mutator) {
+    public ObjectElement sort(Comparator<? super String> comparator) {
+        var map = new LinkedHashMap<>(this.elements);
+
+        this.elements.keySet().stream()
+                .sorted(comparator)
+                .forEachOrdered(key -> map.putLast(key, this.elements.get(key)));
+
+        return new ObjectElement(map);
+    }
+
+    public ObjectElement sort() {
+        return this.sort(String::compareTo);
+    }
+
+    public ObjectElement copy(Consumer<LinkedHashMap<String, Element>> mutator) {
         if (mutator == null) throw new IllegalArgumentException("Mutator cannot be null!");
         var map = new LinkedHashMap<>(this.elements);
         mutator.accept(map);

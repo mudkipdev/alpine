@@ -71,7 +71,7 @@ public class JsonWriteBenchmark {
 
     @Benchmark
     public void alpine(Blackhole blackhole) throws Exception {
-        blackhole.consume(Json.write(this.alpineArray[this.index++ % INPUTS.length], Json.Formatting.COMPACT));
+        blackhole.consume(Json.write(this.alpineArray[this.index++ % INPUTS.length], JsonFormatting.COMPACT));
     }
 
     @Benchmark

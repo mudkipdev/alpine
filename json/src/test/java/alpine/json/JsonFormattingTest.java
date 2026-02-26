@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static alpine.json.Element.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-final class FormattingTest {
+final class JsonFormattingTest {
     private static final ObjectElement OBJECT = object()
             .set("a", "b")
             .set("c", "d")
@@ -15,14 +15,14 @@ final class FormattingTest {
     void testCompact() {
         assertEquals(
                 "{\"a\":\"b\",\"c\":\"d\",\"nested\":{\"x\":1}}",
-                Json.write(OBJECT, Json.Formatting.COMPACT));
+                Json.write(OBJECT, JsonFormatting.COMPACT));
     }
 
     @Test
-    void testInlinePretty() {
+    void testInline() {
         assertEquals(
                 "{\"a\": \"b\", \"c\": \"d\", \"nested\": {\"x\": 1}}",
-                Json.write(OBJECT, Json.Formatting.INLINE_PRETTY));
+                Json.write(OBJECT, JsonFormatting.INLINE));
     }
 
     @Test
@@ -34,6 +34,6 @@ final class FormattingTest {
             "nested": {
                 "x": 1
             }
-        }""", Json.write(OBJECT, Json.Formatting.PRETTY));
+        }""", Json.write(OBJECT, JsonFormatting.PRETTY));
     }
 }

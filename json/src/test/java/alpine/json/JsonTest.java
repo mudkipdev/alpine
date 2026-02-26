@@ -41,16 +41,21 @@ final class JsonTest {
     @Test
     void testArrayRemoval() {
         assert array(1, 2, 3).clear().empty();
-        assert Objects.equals(array("a", "b", "c").removeAt(0), array("b", "c"));
-        assert Objects.equals(array("a", "b", "c").remove("b"), array("a", "c"));
-        assertThrows(IndexOutOfBoundsException.class, () -> array().removeAt(1));
+        assert Objects.equals(array("a", "b", "c").remove(0), array("b", "c"));
+        assert Objects.equals(array("a", "b", "c").removeValue("b"), array("a", "c"));
+        assertThrows(IndexOutOfBoundsException.class, () -> array().remove(1));
     }
 
     @Test
     void testArrayContains() {
         assert !array().has(nil());
-        assert array(1, 2, 3).has(number(1));
-        assert array("a", "b").has(string("b"));
+        assert array(1, 2, 3).has(1);
+        assert array("a", "b").has("b");
+    }
+
+    @Test
+    void testArrayReversal() {
+        assertEquals(array(1, 3, 2), array(2, 3, 1).reverse());
     }
 
     @Test
@@ -76,10 +81,19 @@ final class JsonTest {
         assert object().set("key", "value").remove("key").empty();
     }
 
+    @Test
+    void testObjectSorting() {
+        var unsortedObject = object().set("b", 2).set("a", 1);
+        var sortedObject = object().set("a", 1).set("b", 2);
+        assertEquals(unsortedObject, sortedObject);
+        assertNotEquals(unsortedObject.toString(), sortedObject.toString());
+        assertEquals(unsortedObject.sort().toString(), sortedObject.toString());
+    }
+
     @ParameterizedTest(name = "{0} (encoding)")
     @MethodSource("arguments")
     void testEncoding(String label, Element element, String expected) {
-        var actual = Json.write(element, Json.Formatting.INLINE_PRETTY);
+        var actual = Json.write(element, JsonFormatting.INLINE);
         assert Objects.equals(actual, expected) : String.format(
                 "Expected %s while encoding, got %s.", '"' + expected + '"', actual);
     }

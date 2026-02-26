@@ -2,13 +2,13 @@ package alpine.json;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import static alpine.json.JsonUtility.*;
+import static alpine.json.Json.*;
 
 @ApiStatus.Internal
 final class JsonWriter {
     private static final char[] HEX_CHARACTERS = "0123456789ABCDEF".toCharArray();
 
-    String write(Element value, Json.Formatting formatting) {
+    String write(Element value, JsonFormatting formatting) {
         // pre-size string builder for performance
         var builder = new StringBuilder(switch (value) {
             case ObjectElement element -> 64 * element.length();
@@ -20,7 +20,7 @@ final class JsonWriter {
         return builder.toString();
     }
 
-    private void write(StringBuilder builder, Element value, Json.Formatting formatting, int depth) {
+    private void write(StringBuilder builder, Element value, JsonFormatting formatting, int depth) {
         switch (value) {
             case NullElement _ -> builder.append(NULL);
             case BooleanElement element -> builder.append(element.value() ? TRUE : FALSE);
@@ -89,7 +89,7 @@ final class JsonWriter {
         builder.append(QUOTE);
     }
 
-    private void writeIndentation(StringBuilder builder, Json.Formatting formatting, int depth) {
+    private void writeIndentation(StringBuilder builder, JsonFormatting formatting, int depth) {
         if (formatting.indentation().isEmpty()) {
             return;
         }
@@ -98,7 +98,7 @@ final class JsonWriter {
         builder.append(formatting.indentation().repeat(depth));
     }
 
-    private void writeArray(StringBuilder builder, ArrayElement element, Json.Formatting formatting, int depth) {
+    private void writeArray(StringBuilder builder, ArrayElement element, JsonFormatting formatting, int depth) {
         builder.append(BEGIN_ARRAY);
         var firstElement = true;
 
@@ -119,7 +119,7 @@ final class JsonWriter {
         builder.append(END_ARRAY);
     }
 
-    private void writeObject(StringBuilder builder, ObjectElement element, Json.Formatting formatting, int depth) {
+    private void writeObject(StringBuilder builder, ObjectElement element, JsonFormatting formatting, int depth) {
         builder.append(BEGIN_OBJECT);
         var firstElement = new boolean[] { true };
 
