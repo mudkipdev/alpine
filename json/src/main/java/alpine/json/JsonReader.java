@@ -20,7 +20,14 @@ final class JsonReader {
         this.characters = input.toCharArray();
         this.position = 0;
         this.skipWhitespace();
-        return this.readElement();
+        var element = this.readElement();
+        this.skipWhitespace();
+
+        if (this.position < this.characters.length) {
+            throw new ParsingException(this.input, "Unexpected trailing content!", this.position);
+        }
+
+        return element;
     }
 
     private Element readElement() throws ParsingException {

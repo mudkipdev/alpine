@@ -18,7 +18,8 @@ final class JsonTest {
             "test",
             "{", "}", "[", "]",
             "\"", "\"\0\"",
-            "123abc", "[123e]", "0.", ".0"
+            "123abc", "[123e]", "0.", ".0",
+            "[],", "{}abc"
         }) {
             assertThrows(ParsingException.class, () -> Json.read(string));
         }
@@ -65,7 +66,7 @@ final class JsonTest {
 
     @Test
     void testObjectSetting() {
-        object().set("key", "value").expect("key", StringElement.class);
+        assertDoesNotThrow(() -> object().set("key", "value").expect("key", StringElement.class));
         assertThrows(AssertionError.class, () -> object().set("key", "value").expect("key", NullElement.class));
     }
 

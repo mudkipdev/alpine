@@ -181,7 +181,7 @@ public final class ObjectElement implements Element, Iterable<Map.Entry<String, 
         return this.elements.containsValue(value);
     }
 
-    public boolean hasString(String value) {
+    public boolean hasValue(String value) {
         return this.hasValue(Element.string(value));
     }
 

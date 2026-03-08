@@ -12,6 +12,9 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.fail;
+
 final class ExternalTests {
     @SuppressWarnings("resource")
     static Stream<Arguments> arguments() {
@@ -42,14 +45,15 @@ final class ExternalTests {
     @ParameterizedTest(name = "{0}")
     @MethodSource("arguments")
     void test(String name, Behavior behavior, String string) {
-        try {
-            Json.read(string);
-        } catch (ParsingException e) {
-            if (behavior == Behavior.SHOULD_PASS) {
-                throw new AssertionError(name + " should have passed!", e);
-            }
-        } catch (StackOverflowError ignored) {
+        if (behavior == Behavior.SHOULD_PASS) {
+            assertDoesNotThrow(() -> Json.read(string));
+        } else if (behavior == Behavior.SHOULD_FAIL) {
+            try {
+                Json.read(string);
+                fail("Expected ParsingException or StackOverflowError");
+            } catch (ParsingException | StackOverflowError ignored) {
 
+            }
         }
     }
 
