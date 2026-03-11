@@ -85,4 +85,20 @@ public sealed interface Element permits ArrayElement, BooleanElement, NullElemen
     static ObjectElement object(Map<String, Element> map) {
         return new ObjectElement(new LinkedHashMap<>(map));
     }
+
+    static ObjectElement object(Collection<ObjectElement> objects) {
+        var map = new LinkedHashMap<String, Element>();
+        objects.forEach(object -> object.each(map::put));
+        return new ObjectElement(map);
+    }
+
+    static ObjectElement object(ObjectElement... objects) {
+        var map = new LinkedHashMap<String, Element>();
+
+        for (var object : objects) {
+            object.each(map::put);
+        }
+
+        return new ObjectElement(map);
+    }
 }

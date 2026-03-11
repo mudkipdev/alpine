@@ -91,6 +91,13 @@ final class JsonTest {
         assertEquals(unsortedObject.sort().toString(), sortedObject.toString());
     }
 
+    @Test
+    void testObjectMerging() {
+        var firstObject = object().set("a", "b");
+        var secondObject = object().set("c", "d");
+        assertEquals(object(firstObject, secondObject), object().set("a", "b").set("c", "d"));
+    }
+
     @ParameterizedTest(name = "{0} (encoding)")
     @MethodSource("arguments")
     void testEncoding(String label, Element element, String expected) {
