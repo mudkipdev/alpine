@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static alpine.json.Element.*;
+
 /**
  * A JSON element which stores a collection of key-value pairs where the keys are strings.
  * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-4">RFC 8259</a>
@@ -181,16 +183,16 @@ public final class ObjectElement implements Element, Iterable<Map.Entry<String, 
         return this.elements.containsValue(value);
     }
 
-    public boolean hasValue(String value) {
-        return this.hasValue(Element.string(value));
+    public boolean hasValue(boolean value) {
+        return this.hasValue(bool(value));
     }
 
     public boolean hasValue(Number value) {
-        return this.hasValue(Element.number(value));
+        return this.hasValue(number(value));
     }
 
-    public boolean hasValue(Boolean value) {
-        return this.hasValue(Element.bool(value));
+    public boolean hasValue(String value) {
+        return this.hasValue(string(value));
     }
 
     public void each(BiConsumer<String, Element> consumer) {
@@ -268,15 +270,15 @@ public final class ObjectElement implements Element, Iterable<Map.Entry<String, 
     }
 
     public ObjectElement set(String key, boolean value) {
-        return this.set(key, Element.bool(value));
+        return this.set(key, bool(value));
     }
 
     public ObjectElement set(String key, Number value) {
-        return this.set(key, Element.number(value));
+        return this.set(key, number(value));
     }
 
     public ObjectElement set(String key, String value) {
-        return this.set(key, Element.string(value));
+        return this.set(key, string(value));
     }
 
     public ObjectElement remove(String key) {
