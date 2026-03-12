@@ -95,16 +95,16 @@ public final class ArrayElement implements Element, Iterable<Element> {
         return this.elements.contains(element);
     }
 
-    public boolean has(String value) {
-        return this.has(string(value));
+    public boolean has(boolean value) {
+        return this.has(bool(value));
     }
 
     public boolean has(Number value) {
         return this.has(number(value));
     }
 
-    public boolean has(boolean value) {
-        return this.has(bool(value));
+    public boolean has(String value) {
+        return this.has(string(value));
     }
 
     public void each(Consumer<Element> consumer) {

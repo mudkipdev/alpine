@@ -243,7 +243,7 @@ public final class ObjectElement implements Element, Iterable<Map.Entry<String, 
         return true;
     }
 
-    public boolean anyValues(Predicate<Element> predicate) {
+    public boolean anyValue(Predicate<Element> predicate) {
         if (predicate == null) {
             throw new IllegalArgumentException("Predicate cannot be null!");
         }
