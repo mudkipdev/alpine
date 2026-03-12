@@ -8,6 +8,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static alpine.json.Element.*;
+
 /**
  * A JSON element which in itself stores an ordered sequence of elements.
  * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-5">RFC 8259</a>
@@ -94,15 +96,15 @@ public final class ArrayElement implements Element, Iterable<Element> {
     }
 
     public boolean has(String value) {
-        return this.has(Element.string(value));
+        return this.has(string(value));
     }
 
     public boolean has(Number value) {
-        return this.has(Element.number(value));
+        return this.has(number(value));
     }
 
-    public boolean has(Boolean value) {
-        return this.has(Element.bool(value));
+    public boolean has(boolean value) {
+        return this.has(bool(value));
     }
 
     public void each(Consumer<Element> consumer) {
@@ -147,15 +149,15 @@ public final class ArrayElement implements Element, Iterable<Element> {
     }
 
     public ArrayElement append(boolean element) {
-        return this.append(Element.bool(element));
+        return this.append(bool(element));
     }
 
     public ArrayElement append(Number element) {
-        return this.append(Element.number(element));
+        return this.append(number(element));
     }
 
     public ArrayElement append(String element) {
-        return this.append(Element.string(element));
+        return this.append(string(element));
     }
 
     public ArrayElement set(int index, Element element) {
@@ -164,15 +166,15 @@ public final class ArrayElement implements Element, Iterable<Element> {
     }
 
     public ArrayElement set(int index, boolean element) {
-        return this.set(index, Element.bool(element));
+        return this.set(index, bool(element));
     }
 
     public ArrayElement set(int index, Number element) {
-        return this.set(index, Element.number(element));
+        return this.set(index, number(element));
     }
 
     public ArrayElement set(int index, String element) {
-        return this.set(index, Element.string(element));
+        return this.set(index, string(element));
     }
 
     public ArrayElement insert(int index, Element element) {
@@ -181,15 +183,15 @@ public final class ArrayElement implements Element, Iterable<Element> {
     }
 
     public ArrayElement insert(int index, boolean element) {
-        return this.insert(index, Element.bool(element));
+        return this.insert(index, bool(element));
     }
 
     public ArrayElement insert(int index, Number element) {
-        return this.insert(index, Element.number(element));
+        return this.insert(index, number(element));
     }
 
     public ArrayElement insert(int index, String element) {
-        return this.insert(index, Element.string(element));
+        return this.insert(index, string(element));
     }
 
     public ArrayElement remove(int index) {
@@ -201,15 +203,15 @@ public final class ArrayElement implements Element, Iterable<Element> {
     }
 
     public ArrayElement removeValue(boolean element) {
-        return this.removeValue(Element.bool(element));
+        return this.removeValue(bool(element));
     }
 
     public ArrayElement removeValue(Number element) {
-        return this.removeValue(Element.number(element));
+        return this.removeValue(number(element));
     }
 
     public ArrayElement removeValue(String element) {
-        return this.removeValue(Element.string(element));
+        return this.removeValue(string(element));
     }
 
     public ArrayElement clear() {
