@@ -28,8 +28,26 @@ final class JsonCodecTest {
         WEST
     }
 
+    record Outer(String outer, Inner inner) {
+        public static final Codec<Outer> CODEC = Codec.<Outer>builder()
+                .with("outer", Codec.STRING, Outer::outer)
+                .with("inner", Inner.CODEC, Outer::inner)
+                .build(Outer::new);
+
+        public static final Codec<Outer> FLAT_CODEC = Codec.<Outer>builder()
+                .with("outer", Codec.STRING, Outer::outer)
+                .with(Inner.CODEC.flatten(), Outer::inner)
+                .build(Outer::new);
+
+        record Inner(String inner) {
+            public static final Codec<Inner> CODEC = Codec.<Inner>builder()
+                    .with("inner", Codec.STRING, Inner::inner)
+                    .build(Inner::new);
+        }
+    }
+
     @Test
-    void testObjectCodec() {
+    void testObject() {
         var user = new User("Steve", 67, List.of("Alex"));
         var element = object().set("name", "Steve").set("age", 67).set("friends", array("Alex"));
         assertEquals(element, User.CODEC.encode(Transcoder.JSON, user));
@@ -82,7 +100,7 @@ final class JsonCodecTest {
     }
 
     @Test
-    void testPrimitiveCodecs() {
+    void testPrimitive() {
         assertEquals(bool(true), Codec.BOOLEAN.encode(Transcoder.JSON, true));
         assertEquals(true, Codec.BOOLEAN.decode(Transcoder.JSON, bool(true)));
 
@@ -119,7 +137,7 @@ final class JsonCodecTest {
     }
 
     @Test
-    void testPrimitiveArrayCodecs() {
+    void testPrimitiveArray() {
         var booleans = new boolean[] {true, false, true};
         assertArrayEquals(booleans, Codec.BOOLEAN_ARRAY.decode(Transcoder.JSON, Codec.BOOLEAN_ARRAY.encode(Transcoder.JSON, booleans)));
 
@@ -134,7 +152,7 @@ final class JsonCodecTest {
     }
 
     @Test
-    void testEnumName() {
+    void testEnum() {
         var codec = Codec.name(Direction.class);
         assertEquals(string("north"), codec.encode(Transcoder.JSON, Direction.NORTH));
         assertEquals(Direction.SOUTH, codec.decode(Transcoder.JSON, string("south")));
@@ -153,5 +171,12 @@ final class JsonCodecTest {
         assertEquals(uuid, Codec.UUID.decode(Transcoder.JSON, string("550e8400-e29b-41d4-a716-446655440000")));
         var random = UUID.randomUUID();
         assertEquals(random, Codec.UUID.decode(Transcoder.JSON, Codec.UUID.encode(Transcoder.JSON, random)));
+    }
+
+    @Test
+    void testFlatten() {
+        var value = new Outer("outer", new Outer.Inner("inner"));
+        assertEquals(Outer.CODEC.encode(Transcoder.JSON, value), object().set("outer", "outer").set("inner", object().set("inner", "inner")));
+        assertEquals(Outer.FLAT_CODEC.encode(Transcoder.JSON, value), object().set("outer", "outer").set("inner", "inner"));
     }
 }

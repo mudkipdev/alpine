@@ -142,6 +142,10 @@ public interface Codec<T> extends PrimitiveCodecs, StandardCodecs, PrimitiveArra
         };
     }
 
+    default FlatCodec<T> flatten() {
+        return new FlatCodec<>(this);
+    }
+
     static <T> CodecBuilder._0<T> builder() {
         return new CodecBuilder._0<>();
     }
