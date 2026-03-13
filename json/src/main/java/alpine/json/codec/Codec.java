@@ -142,6 +142,26 @@ public interface Codec<T> extends PrimitiveCodecs, StandardCodecs, PrimitiveArra
         };
     }
 
+    static <E extends Enum<E>> Codec<E> ordinal(Class<E> enumClass) {
+        return new Codec<>() {
+            @Override
+            public <R> E decode(Transcoder<R> transcoder, R value) {
+                var ordinal = (int) transcoder.decodeNumber(value);
+
+                if (ordinal >= enumClass.getEnumConstants().length) {
+                    throw new DecodingException("Enum ordinal out of bounds: " + ordinal);
+                }
+
+                return enumClass.getEnumConstants()[ordinal];
+            }
+
+            @Override
+            public <R> R encode(Transcoder<R> transcoder, E value) {
+                return transcoder.encodeNumber(value.ordinal());
+            }
+        };
+    }
+
     default FlatCodec<T> flatten() {
         return new FlatCodec<>(this);
     }

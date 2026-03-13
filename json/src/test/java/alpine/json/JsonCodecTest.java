@@ -152,7 +152,7 @@ final class JsonCodecTest {
     }
 
     @Test
-    void testEnum() {
+    void testEnumName() {
         var codec = Codec.name(Direction.class);
         assertEquals(string("north"), codec.encode(Transcoder.JSON, Direction.NORTH));
         assertEquals(Direction.SOUTH, codec.decode(Transcoder.JSON, string("south")));
@@ -162,6 +162,19 @@ final class JsonCodecTest {
         }
 
         assertThrows(Exception.class, () -> codec.decode(Transcoder.JSON, string("up")));
+    }
+
+    @Test
+    void testEnumOrdinal() {
+        var codec = Codec.ordinal(Direction.class);
+        assertEquals(number(0), codec.encode(Transcoder.JSON, Direction.NORTH));
+        assertEquals(Direction.SOUTH, codec.decode(Transcoder.JSON, number(1)));
+
+        for (var direction : Direction.values()) {
+            assertEquals(direction, codec.decode(Transcoder.JSON, codec.encode(Transcoder.JSON, direction)));
+        }
+
+        assertThrows(Exception.class, () -> codec.decode(Transcoder.JSON, number(999)));
     }
 
     @Test
