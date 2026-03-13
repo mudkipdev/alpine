@@ -176,7 +176,7 @@ final class JsonCodecTest {
     @Test
     void testFlatten() {
         var value = new Outer("outer", new Outer.Inner("inner"));
-        assertEquals(Outer.CODEC.encode(Transcoder.JSON, value), object().set("outer", "outer").set("inner", object().set("inner", "inner")));
-        assertEquals(Outer.FLAT_CODEC.encode(Transcoder.JSON, value), object().set("outer", "outer").set("inner", "inner"));
+        assertEquals(object().set("outer", "outer").set("inner", object().set("inner", "inner")), Outer.CODEC.encode(Transcoder.JSON, value));
+        assertEquals(object().set("outer", "outer").set("inner", "inner"), Outer.FLAT_CODEC.encode(Transcoder.JSON, value));
     }
 }
