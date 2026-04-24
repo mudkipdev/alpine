@@ -74,27 +74,27 @@ public final class ObjectElement implements Element, Iterable<Map.Entry<String, 
     }
 
     public byte getByte(String key) {
-        return (byte) this.getNumber(key, 0);
+        return this.getNumber(key, 0).byteValue();
     }
 
     public short getShort(String key) {
-        return (short) this.getNumber(key, 0);
+        return this.getNumber(key, 0).shortValue();
     }
 
     public int getInteger(String key) {
-        return (int) this.getNumber(key, 0);
+        return this.getNumber(key, 0).intValue();
     }
 
     public long getLong(String key) {
-        return (long) this.getNumber(key, 0);
+        return this.getNumber(key, 0).longValue();
     }
 
     public float getFloat(String key) {
-        return (float) this.getNumber(key, 0.0F);
+        return this.getNumber(key, 0.0F).floatValue();
     }
 
     public double getDouble(String key) {
-        return (double) this.getNumber(key, 0.0D);
+        return this.getNumber(key, 0.0D).doubleValue();
     }
 
     public @Nullable Boolean getBoolean(String key) {
